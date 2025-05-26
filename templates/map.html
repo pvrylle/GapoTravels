@@ -1,0 +1,763 @@
+{% extends "base.html" %}
+
+{% block title %}Olongapo City Map{% endblock %}
+
+{% block head %}
+<!-- Add Leaflet CSS and JS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+<!-- Map page styles -->
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-0">
+    <div class="position-relative">
+        <!-- Full-screen map -->
+        <div id="map" class="full-height-map"></div>
+        
+        <!-- Map overlay card -->
+        <div class="map-overlay">
+            <div class="map-overlay-header">
+                <h5 class="m-0"><i class="fas fa-map-marked-alt text-primary me-2"></i>Olongapo Destinations</h5>
+                <button class="map-overlay-toggle" id="toggle-overlay">
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+            </div>
+            <div class="map-overlay-body">
+                <!-- Search bar - Moved to top for better accessibility -->
+                <div class="enhanced-search mb-3">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="location-search" class="form-control" 
+                           placeholder="Search destinations, attractions..." 
+                           aria-label="Search destinations">
+                    <button class="clear-button" id="clear-search" aria-label="Clear search">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <!-- Minimal Filter section -->
+                <div class="minimal-filters">
+                    <div class="filter-pill-container">
+                        <div class="filter-pill active" data-type="all" aria-pressed="true">
+                            <i class="fas fa-globe" aria-hidden="true"></i>
+                            <span>All</span>
+                            <span class="pill-count" id="count-all">0</span>
+                        </div>
+                        <div class="filter-pill beach-pill" data-type="beaches" aria-pressed="false">
+                            <i class="fas fa-umbrella-beach" aria-hidden="true"></i>
+                            <span>Beaches</span>
+                            <span class="pill-count" id="count-beaches">0</span>
+                        </div>
+                        <div class="filter-pill nature-pill" data-type="nature" aria-pressed="false">
+                            <i class="fas fa-tree" aria-hidden="true"></i>
+                            <span>Nature</span>
+                            <span class="pill-count" id="count-nature">0</span>
+                        </div>
+                        <div class="filter-pill historical-pill" data-type="historical" aria-pressed="false">
+                            <i class="fas fa-landmark" aria-hidden="true"></i>
+                            <span>Historical</span>
+                            <span class="pill-count" id="count-historical">0</span>
+                        </div>
+                        <div class="filter-pill food-pill" data-type="food" aria-pressed="false">
+                            <i class="fas fa-utensils" aria-hidden="true"></i>
+                            <span>Food</span>
+                            <span class="pill-count" id="count-food">0</span>
+                        </div>
+                        <div class="filter-pill shopping-pill" data-type="shopping" aria-pressed="false">
+                            <i class="fas fa-shopping-bag" aria-hidden="true"></i>
+                            <span>Shopping</span>
+                            <span class="pill-count" id="count-shopping">0</span>
+                        </div>
+                        <div class="filter-pill nightlife-pill" data-type="nightlife" aria-pressed="false">
+                            <i class="fas fa-moon" aria-hidden="true"></i>
+                            <span>Nightlife</span>
+                            <span class="pill-count" id="count-nightlife">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Results info bar - UPDATED -->
+                <div class="search-results-info">
+                    <span>
+                        <i class="fas fa-map-marker-alt me-1"></i>
+                        <span class="result-count">Showing <span id="visible-count">0</span> of <span id="total-count">0</span></span>
+                    </span>
+                    <button class="view-all" id="view-all-btn">
+                        View All
+                    </button>
+                </div>
+                
+                <!-- Location cards -->
+                <div id="locations-list">
+                    <!-- Locations will be added here -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Back button - floating top left -->
+        <div class="position-absolute top-0 start-0 m-3">
+            <a href="{{ url_for('index') }}" class="back-button">
+                <i class="fas fa-arrow-left"></i>
+                <span>Back</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Initialize map centered on Olongapo City
+    const map = L.map('map').setView([14.8386, 120.2842], 14);
+
+    // Add OpenStreetMap tiles
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Define locations
+    const locations = [
+        {
+            name: "SM City Olongapo Central",
+            coords: [14.83603, 120.28301],
+            description: "Major shopping mall with retail stores, dining, and entertainment",
+            type: "shopping",
+            photos: ["/static/images/sm_central.jpg"]
+        },
+        {
+            name: "SM City Olongapo Downtown",
+            coords: [14.8265, 120.2831],
+            description: "Popular mall with shops, dining, and entertainment",
+            type: "shopping",
+            photos: ["/static/images/smcd.jpg"]
+        },
+        {
+            name: "Empire",
+            coords: [14.8292, 120.2813],
+            description: "Trendy nightclub and entertainment spot in Olongapo",
+            type: "nightlife",
+            photos: ["/static/images/empire.jpeg"]
+        },
+        {
+            name: "Harbor Point",
+            coords: [14.8248, 120.2802],
+            description: "Ayala Mall with various shops and restaurants",
+            type: "shopping",
+            photos: ["/static/images/harbor_point.png"]
+        },
+        {
+            name: "Marikit Park",
+            coords: [14.83737, 120.28312],
+            description: "Public park and recreational area",
+            type: "park",
+            photos: ["/static/images/marikit_park.jpg"]
+        },
+        {
+            name: "Olongapo City Public Market",
+            coords: [14.840395, 120.2866710],
+            description: "Traditional market with fresh local produce",
+            type: "market",
+            photos: ["/static/images/public_market.jpg"]
+        },
+        {
+            name: "Rizal Triangle",
+            coords: [14.84148, 120.28696],
+            description: "Historic landmark and meeting point",
+            type: "landmark",
+            photos: ["/static/images/rizal_triangle.jpg"]
+        },
+        {
+            name: "Pamulaklakin Forest Trail",
+            coords: [14.80527, 120.329999],
+            description: "Nature trail with scenic views of the forest",
+            type: "park",
+            photos: ["/static/images/pamulaklakin_forest_trail.jpg"]
+        },
+        {
+            name: "SBMA Waterfront Beach",
+            coords: [14.8219, 120.2717],
+            description: "Tranquil beach with calm waters, ideal for families and picnics",
+            type: "beach",
+            photos: ["/static/images/water_front_beach.jpg"]
+        },
+        {
+            name: "Baloy Long Beach",
+            coords: [14.84863, 120.25250],
+            description: "Popular beach strip with resorts, water activities, and vibrant nightlifes",
+            type: "beach",
+            photos: ["/static/images/baloy_long_beach.jpeg"]
+        },
+        {
+            name: "All Hands Beach",
+            coords: [14.7960, 120.26550],
+            description: "Family-friendly beach with clear waters and white sand",
+            type: "beach",
+            photos: ["/static/images/all_hands_beach.jpg"]
+        },
+        {
+            name: "Blue Rock Beach Resort",
+            coords: [14.84780, 120.25478],
+            description: "Beachfront resort offering top-notch amenities and great views",
+            type: "beach",
+            photos: ["/static/images/blue_rock_resort.jpg"]
+        },
+        {
+            name: "White Rock Beach",
+            coords: [14.8552, 120.24316],
+            description: "Beautiful white sand beach with clear waters",
+            type: "beach",
+            photos: ["/static/images/white_rock_beach.jpg"]
+        },
+        {
+            name: "Grande Island Resort",
+            coords: [14.773008, 120.22914],
+            description: "Island resort with pristine beaches",
+            type: "beach",
+            photos: ["/static/images/grande_island.jpg"]
+        },
+        {
+            name: "SBMA Beach",
+            coords: [14.81975, 120.27625],
+            description: "Scenic beach with stunning views of Subic Bay, perfect for relaxation",
+            type: "beach",
+            photos: ["/static/images/subic_beach.jpg"]
+        },
+        {
+            name: "Pier One Bar",
+            coords: [14.82130, 120.27450],
+            description: "Lively waterfront bar with drinks, music, and sea views",
+            type: "nightlife",
+            photos: ["/static/images/pier_one.jpg"]
+        },
+        {
+            name: "Skybar",
+            coords: [14.82150, 120.27400],
+            description: "Chill rooftop bar offering cocktails and city views",
+            type: "nightlife",
+            photos: ["/static/images/skybar.jpg"]
+        },
+        //new
+        {
+            name: "JEST Camp",
+            coords: [14.7918873, 120.29438],
+            description: "Survival training, bird shows, and jungle fun.",
+            type: "park",
+            photos: ["/static/images/jest_camp.jpg"]
+        },
+        {
+            name: "Zoobic Safari",
+            coords: [14.75083, 120.26689],
+            description: "Tiger safari, exotic animals, and fun for kids.",
+            type: "nature",
+            photos: ["/static/images/zoobic_safari.jpg"]
+        },
+        {
+            name: "Spanish Gate",
+            coords: [14.8175876, 120.283354],
+            description: "Historic gate from the Spanish era naval base.",
+            type: "landmark",
+            photos: ["/static/images/spanish_gate.png"]
+        },
+        {
+            name: "Hellships Memorial",
+            coords: [14.81679361, 120.280858],
+            description: "Honors World War II prisoners of war.",
+            type: "landmark",
+            photos: ["/static/images/hellships_memorial.jpg"]
+        },
+        {
+            name: "Meat Plus",
+            coords: [14.818029 , 120.283654 ],
+            description: "Meat-centric restaurant with a variety of meat dishes.",
+            type: "food",
+            photos: ["/static/images/meat_plus.jpg"]
+        },
+        {
+            name: "Gerry's Grill",
+            coords: [14.81876062 , 120.2781711  ],
+            description: "Filipino restaurant with seafood specialties",
+            type: "food",
+            photos: ["/static/images/gerrys.jpg"]
+        },
+        {
+            name: "Xtremely Xpresso",
+            coords: [14.8193703 , 120.280611],
+            description: "Coffee shop with a variety of coffee and pastries.",
+            type: "food",
+            photos: ["/static/images/xpresso.jpg"]
+        }
+    ];
+
+    // Sort locations alphabetically by name
+    locations.sort((a, b) => a.name.localeCompare(b.name));
+
+    // Create custom markers for different location types
+    const markerIcons = {
+        shopping: L.divIcon({
+            html: '<div class="marker-icon-wrapper"><i class="fas fa-shopping-cart"></i></div>',
+            className: 'custom-marker-icon shopping-icon',
+            iconSize: [48, 48],
+            iconAnchor: [24, 24]
+        }),
+        park: L.divIcon({
+            html: '<div class="marker-icon-wrapper"><i class="fas fa-tree"></i></div>',
+            className: 'custom-marker-icon nature-icon',
+            iconSize: [48, 48],
+            iconAnchor: [24, 24]
+        }),
+        market: L.divIcon({
+            html: '<div class="marker-icon-wrapper"><i class="fas fa-store"></i></div>',
+            className: 'custom-marker-icon shopping-icon',
+            iconSize: [48, 48],
+            iconAnchor: [24, 24]
+        }),
+        nature: L.divIcon({
+            html: '<div class="marker-icon-wrapper"><i class="fas fa-tree"></i></div>',
+            className: 'custom-marker-icon nature-icon',
+            iconSize: [48, 48],
+            iconAnchor: [24, 24]
+        }),
+        landmark: L.divIcon({
+            html: '<div class="marker-icon-wrapper"><i class="fas fa-landmark"></i></div>',
+            className: 'custom-marker-icon historical-icon',
+            iconSize: [48, 48],
+            iconAnchor: [24, 24]
+        }),
+        venue: L.divIcon({
+            html: '<div class="marker-icon-wrapper"><i class="fas fa-building"></i></div>',
+            className: 'custom-marker-icon venue-icon',
+            iconSize: [48, 48],
+            iconAnchor: [24, 24]
+        }),
+        food: L.divIcon({
+            html: '<div class="marker-icon-wrapper"><i class="fas fa-utensils"></i></div>',
+            className: 'custom-marker-icon food-icon',
+            iconSize: [48, 48],
+            iconAnchor: [24, 24]
+        }),
+        nightlife: L.divIcon({
+            html: '<div class="marker-icon-wrapper"><i class="fas fa-moon"></i></div>',
+            className: 'custom-marker-icon nightlife-icon',
+            iconSize: [48, 48],
+            iconAnchor: [24, 24]
+        }),
+        beach: L.divIcon({
+            html: '<div class="marker-icon-wrapper"><i class="fas fa-umbrella-beach"></i></div>',
+            className: 'custom-marker-icon beach-icon',
+            iconSize: [48, 48],
+            iconAnchor: [24, 24]
+        }),
+        historical: L.divIcon({
+            html: '<div class="marker-icon-wrapper"><i class="fas fa-landmark"></i></div>',
+            className: 'custom-marker-icon historical-icon',
+            iconSize: [48, 48],
+            iconAnchor: [24, 24]
+        })
+    };
+
+    // Create markers and populate locations list
+    const locationsList = document.getElementById('locations-list');
+    const markers = {};
+
+    // Set counts
+    document.getElementById('total-count').textContent = locations.length;
+    document.getElementById('visible-count').textContent = locations.length;
+    document.getElementById('count-all').textContent = locations.length;
+    
+    // Track type counts
+    const typeCounts = {
+        'all': locations.length,
+        'beaches': locations.filter(loc => loc.type === 'beach' || loc.type === 'beaches').length,
+        'nature': locations.filter(loc => loc.type === 'nature' || loc.type === 'park').length,
+        'historical': locations.filter(loc => loc.type === 'historical' || loc.type === 'landmark').length,
+        'food': locations.filter(loc => loc.type === 'food' || loc.type === 'restaurant').length,
+        'shopping': locations.filter(loc => loc.type === 'shopping' || loc.type === 'market').length,
+        'nightlife': locations.filter(loc => loc.type === 'nightlife' || loc.type === 'entertainment').length
+    };
+
+    // Update count displays
+    Object.keys(typeCounts).forEach(type => {
+        const countElement = document.getElementById(`count-${type}`);
+        if (countElement) {
+            countElement.textContent = typeCounts[type];
+        }
+    });
+
+    // Helper function to get icon based on location type
+    function getIconForType(type) {
+        const icons = {
+            shopping: 'shopping-cart',
+            park: 'tree',
+            market: 'store',
+            landmark: 'monument',
+            nature: 'tree',
+            venue: 'building',
+            food: 'utensils',
+            beach: 'umbrella-beach'
+        };
+        return icons[type] || 'map-marker-alt';
+    }
+
+    // Create Ppopup pictures
+    locations.forEach(location => {
+        // Create marker with enhanced popup
+        const marker = L.marker(location.coords, {
+            icon: markerIcons[location.type] || L.divIcon({
+                html: '<i class="fas fa-map-marker-alt" style="color: #06B13D;"></i>',
+                className: 'custom-marker-icon',
+                iconSize: [40, 40],
+                iconAnchor: [20, 20]
+            })
+        }).bindPopup(`
+                    <div class="popup-content">
+                <h5>${location.name}</h5>
+                <p>${location.description}</p>
+                        ${location.photos ? `
+                            <div class="popup-photos">
+                                ${location.photos.map((photo, index) => `
+                                    <a href="${photo}" target="_blank" class="popup-photo-link">
+                                        <img src="${photo}" 
+                                             alt="${location.name}"
+                                             class="popup-photo">
+                                    </a>
+                                `).join('')}
+                            </div>
+                        ` : ''}
+                    </div>
+                `)
+                .addTo(map);
+            
+        marker.locationData = location; // Store location data with marker
+            markers[location.name] = marker;
+
+            // Create location card with photo
+            const card = document.createElement('div');
+            card.className = 'location-card';
+        card.dataset.type = location.type;
+            card.innerHTML = `
+            <div class="card mb-2 border-0 shadow-sm">
+                <div class="card-body p-3">
+                    <div class="d-flex align-items-center">
+                        <div class="me-3 text-center" style="width: 40px;">
+                            <i class="fas fa-${getIconForType(location.type)} text-primary" style="font-size: 1.5rem;"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1">${location.name}</h6>
+                            <p class="mb-0 small text-muted">${location.description}</p>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            `;
+
+            // Add click event to center map on location
+            card.addEventListener('click', () => {
+            // Zoom animation
+            map.flyTo(location.coords, 16, {
+                animate: true,
+                duration: 1
+            });
+                marker.openPopup();
+            
+            // Add active class to highlight selected card
+            document.querySelectorAll('.location-card').forEach(c => {
+                c.classList.remove('active');
+            });
+            card.classList.add('active');
+            });
+
+            locationsList.appendChild(card);
+        });
+
+    // Add search functionality
+    const searchInput = document.getElementById('location-search');
+    const clearSearchBtn = document.getElementById('clear-search');
+    const viewAllBtn = document.getElementById('view-all-btn');
+
+    // Check for search parameter in URL
+    function getUrlParameter(name) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(name);
+    }
+
+    // Set initial search from URL parameter if present
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchParam = getUrlParameter('search');
+        const hashLocation = window.location.hash.slice(1).replace(/-/g, ' ');
+
+        let targetLocation; 
+
+        if (hashLocation) {
+            // If we have a hash, look for matching location
+            targetLocation = locations.find(location => 
+                location.name.toLowerCase() === hashLocation.toLowerCase()
+            );
+        } else if (searchParam) {
+            // Otherwise use search parameter
+            targetLocation = locations.find(location => 
+                location.name.toLowerCase().includes(searchParam.toLowerCase())
+            );
+            searchInput.value = decodeURIComponent(searchParam);
+            clearSearchBtn.style.display = 'block';
+            const activeBtn = document.querySelector('.filter-btn.active');
+            const currentType = activeBtn ? activeBtn.dataset.type : 'all';
+            filterLocations(currentType);
+        }
+
+        if (targetLocation) {
+            // Zoom to the location
+            map.flyTo(targetLocation.coords, 16, {
+                animate: true,
+                duration: 1
+            });
+
+            // Open the popup
+            setTimeout(() => {
+                const marker = markers[targetLocation.name];
+                if (marker) {
+                    marker.openPopup();
+
+                    // Add bounce animation to marker
+                    const markerElement = marker.getElement();
+                    if (markerElement) {
+                        markerElement.classList.add('bounce-marker');
+                        setTimeout(() => {
+                            markerElement.classList.remove('bounce-marker');
+                        }, 800);
+                    }
+
+                    // Highlight the card in the list
+                    const cards = document.querySelectorAll('.location-card');
+                    cards.forEach(card => {
+                        if (card.querySelector('h6').textContent === targetLocation.name) {
+                            card.classList.add('active');
+                            card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                        } else {
+                            card.classList.remove('active');
+                        }
+                    });
+                }
+            }, 1000);
+        }
+    });
+
+    // Show/hide clear button based on search input
+    searchInput.addEventListener('input', function() {
+        clearSearchBtn.style.display = this.value ? 'block' : 'none';
+        const activeBtn = document.querySelector('.filter-btn.active');
+        const currentType = activeBtn ? activeBtn.dataset.type : 'all';
+        filterLocations(currentType);
+    });
+
+    // Clear search when button is clicked
+    clearSearchBtn.addEventListener('click', function() {
+        searchInput.value = '';
+        clearSearchBtn.style.display = 'none';
+        const activeBtn = document.querySelector('.filter-btn.active');
+        const currentType = activeBtn ? activeBtn.dataset.type : 'all';
+        filterLocations(currentType);
+        searchInput.focus();
+    });
+
+    // View all button resets category and search
+    viewAllBtn.addEventListener('click', function() {
+        // Reset category filter
+        document.querySelectorAll('.filter-btn').forEach(b => {
+            b.classList.remove('active');
+        });
+        document.querySelector('.filter-btn[data-type="all"]').classList.add('active');
+
+        // Clear search
+        searchInput.value = '';
+        clearSearchBtn.style.display = 'none';
+
+        // Apply filters
+        filterLocations('all');
+
+        // Fit map to show all markers
+        const bounds = [];
+        locations.forEach(location => bounds.push(location.coords));
+        map.fitBounds(bounds, { padding: [50, 50] });
+    });
+
+    // Cache references for efficiency
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const filterPills = document.querySelectorAll('.filter-pill');
+    const visibleCountEl = document.getElementById('visible-count');
+
+    // Utility: get active category from buttons/pills
+    function getActiveCategory() {
+        const activeBtn = document.querySelector('.filter-btn.active');
+        if (activeBtn) return activeBtn.dataset.type;
+
+        const activePill = document.querySelector('.filter-pill.active');
+        if (activePill) return activePill.dataset.type;
+
+        return 'all';  // default
+    }
+
+    // Main filter function (DO NOT REMOVE)
+    function filterLocations(type = null) {
+        const searchTerm = searchInput.value.toLowerCase().trim();
+        const category = type || getActiveCategory();
+
+        let visibleCount = 0;
+
+        locations.forEach(location => {
+            const card = [...document.querySelectorAll('.location-card')].find(c =>
+                c.querySelector('h6').textContent === location.name
+            );
+            const marker = markers[location.name];
+
+            // Category filtering logic
+            let isInCategory = false;
+            switch (category) {
+                case 'all': isInCategory = true; break;
+                case 'beaches': isInCategory = ['beach', 'beaches'].includes(location.type); break;
+                case 'nature': isInCategory = ['nature', 'park'].includes(location.type); break;
+                case 'historical': isInCategory = ['historical', 'landmark'].includes(location.type); break;
+                case 'food': isInCategory = ['food', 'restaurant'].includes(location.type); break;
+                case 'shopping': isInCategory = ['shopping', 'market'].includes(location.type); break;
+                case 'nightlife': isInCategory = ['nightlife', 'entertainment'].includes(location.type); break;
+                default: isInCategory = location.type === category;
+            }
+
+            // Search filtering logic (safe toLowerCase with checks)
+            const matchesSearch = (location.name && location.name.toLowerCase().includes(searchTerm));
+
+            const shouldShow = isInCategory && matchesSearch;
+
+            // Show/hide marker
+            if (marker) {
+                if (shouldShow) {
+                    marker.addTo(map);
+                } else {
+                    map.removeLayer(marker);
+                }
+            }
+
+            // Show/hide card
+            if (card) {
+                card.style.display = shouldShow ? 'block' : 'none';
+            }
+
+            if (shouldShow) visibleCount++;
+        });
+
+        visibleCountEl.textContent = visibleCount;
+    }
+
+
+    // Setup category button click listeners, avoid override by attaching only once (DO NOT REMOVE)
+    filterBtns.forEach(button => {
+        button.addEventListener('click', () => {
+            // Remove active class from all buttons
+            filterBtns.forEach(b => b.classList.remove('active'));
+            // Add active class to clicked button
+            button.classList.add('active');
+
+            // Remove active class from pills (to avoid conflicts)
+            filterPills.forEach(p => {
+                p.classList.remove('active');
+                p.setAttribute('aria-pressed', 'false');
+            });
+
+            filterLocations(button.dataset.type);
+        });
+    });
+
+    // Setup pill click listeners similarly (DO NOT REMOVE)
+    filterPills.forEach(pill => {
+        pill.addEventListener('click', () => {
+            // Remove active from all pills
+            filterPills.forEach(p => {
+                p.classList.remove('active');
+                p.setAttribute('aria-pressed', 'false');
+            });
+
+            // Remove active from filter buttons (to avoid conflicts)
+            filterBtns.forEach(b => b.classList.remove('active'));
+
+            // Activate clicked pill
+            pill.classList.add('active');
+            pill.setAttribute('aria-pressed', 'true');
+
+            filterLocations(pill.dataset.type);
+        });
+    });
+
+    // Search input listener applies filtering with current category (DO NOT REMOVE)
+    searchInput.addEventListener('input', () => {
+        filterLocations(); // no type param - uses currently active category automatically
+    });
+
+    // Update search results info with animation
+    function updateSearchResultsInfo(count, searchTerm) {
+    const searchInfo = document.querySelector('.search-results-info');
+
+    if (searchTerm) {
+        searchInfo.innerHTML = `
+            <span>
+                <i class="fas fa-search me-1"></i>
+                <span class="result-count">${count} result${count !== 1 ? 's' : ''} for "${searchTerm}"</span>
+            </span>
+            <button class="view-all btn btn-sm btn-outline-secondary ms-2" id="view-all-btn-inline">
+                Clear Search
+            </button>
+        `;
+        searchInfo.style.display = 'flex';
+        searchInfo.style.animation = 'none';
+        void searchInfo.offsetWidth; // Trigger reflow
+        searchInfo.style.animation = 'fadeIn 0.3s ease-out forwards';
+
+        // Inline "Clear Search" button
+        document.getElementById('view-all-btn-inline').addEventListener('click', function () {
+            searchInput.value = '';
+            clearSearchBtn.style.display = 'none';
+            filterLocations();
+            resetMapView();
+            searchInfo.style.display = 'none';
+        });
+    } else {
+        // If no search term, hide search info
+        searchInfo.style.display = 'none';
+    }
+}
+
+    
+    // Reset map view to show all locations
+    function resetMapView() {
+        // Reset category filter
+        document.querySelectorAll('.filter-btn').forEach(b => {
+            b.classList.remove('active');
+        });
+        document.querySelector('.filter-btn[data-type="all"]').classList.add('active');
+        
+        // Clear search
+        searchInput.value = '';
+        clearSearchBtn.style.display = 'none';
+        
+        // Apply filters
+        filterLocations();
+        
+        // Fit map to show all markers
+        const bounds = [];
+        locations.forEach(location => bounds.push(location.coords));
+        map.fitBounds(bounds, { padding: [50, 50] });
+    }
+
+    // Toggle overlay panel
+    document.getElementById('toggle-overlay').addEventListener('click', function() {
+        const overlay = document.querySelector('.map-overlay');
+        const icon = this.querySelector('i');
+        
+        overlay.classList.toggle('collapsed');
+        
+        if (overlay.classList.contains('collapsed')) {
+            icon.className = 'fas fa-chevron-up';
+        } else {
+            icon.className = 'fas fa-chevron-down';
+        }
+    });
+
+
+</script>
+{% endblock %} 

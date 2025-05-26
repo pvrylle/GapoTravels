@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Verify Your Identity{% endblock %}
+
+{% block content %}
+<div class="verify-user-container">
+    <div class="button-back">
+        <a href="{{ url_for('index') }}#home" class="btn btn-outline-secondary" title="Back to Home Page">
+            <i class="fas fa-arrow-left"></i> 
+            <span class="back-text">Back to Home Page</span>
+        </a>        
+    </div>
+    <div class="verify-user-wrapper row g-0 h-100 verify-user">
+        <!-- Left side: Image / Branding -->
+        <div class="col-lg-6 d-none d-lg-block order-lg-1 order-1 animate-left">
+            <div class="verify-user-image-container">
+                <div class="verify-user-hero-content">
+                    <img src="{{ url_for('static', filename='images/logogt.png') }}" alt="GapoTravels Logo" class="brand-logo">
+                    <h2>Almost There!</h2>
+                    <p>We just need to verify your identity to proceed with resetting your password.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right side: Form -->
+        <div class="col-lg-6 col-md-12 order-lg-2 order-2 animate-right">
+            <div class="verify-user-form-wrapper">
+                <div class="verify-user-icon-wrapper">
+                    <i class="fas fa-id-card verify-user-icon" aria-hidden="true"></i>
+                    <img src="{{ url_for('static', filename='images/logogt.png') }}" alt="GapoTravels Logo" class="brand-logo">
+                </div>
+                <h3 class="fw-bold text-primary mb-1">Verify Identity</h3>
+                <p class="text-muted small mb-4">Please confirm your name to continue</p>
+                <form method="POST" aria-label="Verify Identity Form">
+                    <input type="hidden" name="email" value="{{ email }}">
+
+                    <div class="form-floating">
+                        <input type="text" class="form-control" name="first_name" placeholder="First Name" value="{{ first_name or '' }}">
+                        <label>First Name</label>
+                    </div>
+
+                    <div class="form-floating">
+                        <input type="text" class="form-control" name="last_name" placeholder="Last Name" value="{{ last_name or '' }}">
+                        <label>Last Name</label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary mt-2" aria-label="Send Reset Link">Send Reset Link</button>
+
+                    <div class="text-center">
+                        <p class="mb-0 small mt-3">
+                            Go back to
+                            <a href="{{ url_for('login') }}" class="text-primary" aria-label="Sign in">Sign in</a>
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% block title %}Settings{% endblock %}
+
+{% block content %}
+<div class="settings-page">
+    <div class="container py-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <!-- Back Navigation -->
+                <div class="mb-4">
+                    <a href="{{ url_for('index') }}" class="back-link">
+                        <i class="fas fa-arrow-left"></i>
+                        <span>Return to Home</span>
+                    </a>
+                </div>
+                
+                <!-- Page Header -->
+                <div class="settings-header mb-4">
+                    <h1>Account Settings</h1>
+                    <p class="text-muted">Manage your profile and preferences</p>
+                </div>
+
+                <!-- Settings Menu Cards -->
+                <div class="settings-menu">
+                    <!-- Profile Card -->
+                    <a href="{{ url_for('edit_profile') }}" class="settings-card profile-card">
+                        <div class="card-icon">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>Profile Information</h3>
+                            <p>Change your name, email and profile photo</p>
+                        </div>
+                        <div class="card-action">
+                            <span class="btn-action">Edit <i class="fas fa-chevron-right"></i></span>
+                        </div>
+                    </a>
+                    
+                    <!-- Privacy Card -->
+                    <div class="settings-card privacy-card" data-bs-toggle="modal" data-bs-target="#privacyModal">
+                        <div class="card-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>Privacy & Security</h3>
+                            <p>Manage your data and privacy preferences</p>
+                        </div>
+                        <div class="card-action">
+                            <span class="btn-action">View <i class="fas fa-chevron-right"></i></span>
+                        </div>
+                    </div>
+                    
+                    <!-- Danger Zone Card -->
+                    <div class="settings-card danger-card">
+                        <div class="card-icon">
+                            <i class="fas fa-exclamation-circle"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>Account Actions</h3>
+                            <p>Permanently delete your account and all related data.</p>
+                        </div>
+                        <div class="card-action">
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
+                                Delete Account
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Delete Account Confirmation Modal -->
+                    <div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content" style="border-radius: 8px; text-align: center; padding: 20px;">
+                                <button type="button" class="btn-close position-absolute" style="top: 10px; right: 10px;" data-bs-dismiss="modal" aria-label="Close"></button>
+                                
+                                <div class="mb-4 mt-3">
+                                    <div class="mx-auto" style="width: 80px; height: 80px; border-radius: 50%; background-color: #fce8e6; display: flex; justify-content: center; align-items: center;">
+                                        <i class="fas fa-times" style="font-size: 40px; color: #ef5350;"></i>
+                                    </div>
+                                </div>
+                                
+                                <h4 class="mb-3" style="color: #4a4a4a;">Are you sure?</h4>
+                                
+                                
+                                <p class="text-muted mb-4">Do you really want to delete these records? This process cannot be undone.</p>
+                                
+                                <div class="d-flex justify-content-center gap-3 mb-2">
+                                    <button type="button" class="btn" style="background-color: #e0e0e0; color: #5f6368; padding: 8px 30px; border-radius: 4px;" data-bs-dismiss="modal">Cancel</button>
+                                    <form method="POST" class="d-inline">
+                                        <input type="hidden" name="action" value="delete_account">
+                                        <button type="submit" class="btn" style="background-color: #ef5350; color: white; padding: 8px 30px; border-radius: 4px;">Delete</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Minimalist Privacy Policy Modal (Wider) -->
+<div class="modal fade" id="privacyModal" tabindex="-1" aria-labelledby="privacyModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="privacyModalLabel">
+                    <i class="fas fa-shield-alt me-2"></i>Privacy Policy
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="privacy-grid">
+                    <div class="mini-privacy-section">
+                        <h6><i class="fas fa-database text-primary me-2"></i>Data Collection</h6>
+                        <p class="small mb-0">We collect only essential information needed to provide our services, including your name, email, and profile picture (optional).</p>
+                    </div>
+                    
+                    <div class="mini-privacy-section">
+                        <h6><i class="fas fa-lock text-primary me-2"></i>Data Protection</h6>
+                        <p class="small mb-0">Your data is encrypted and stored securely following industry standards. We comply with the Data Privacy Act of 2012 (RA 10173).</p>
+                    </div>
+                    
+                    <div class="mini-privacy-section">
+                        <h6><i class="fas fa-user-edit text-primary me-2"></i>Your Rights</h6>
+                        <p class="small mb-0">You can access, update, or delete your personal information at any time through your account settings.</p>
+                    </div>
+                    
+                    <div class="mini-privacy-section">
+                        <h6><i class="fas fa-gavel text-primary me-2"></i>Legal Compliance</h6>
+                        <p class="small mb-0">GapoTravels complies with Philippine laws including the Data Privacy Act (RA 10173) and E-Commerce Act (RA 8792).</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">I Understand</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-danger">
+                    <i class="fas fa-exclamation-triangle"></i> Delete Review
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this review?</p>
+                <p class="text-danger"><small>This action cannot be undone.</small></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form id="deleteReviewForm" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">Delete Review</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Styles moved to style.css -->
+{% endblock %}

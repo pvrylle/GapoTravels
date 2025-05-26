@@ -1,0 +1,432 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Profile{% endblock %}
+
+{% block styles %}
+{{ super() }}
+<style>
+    /* Google account styling */
+    .google-account-notice {
+        background-color: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    
+    .google-account-notice i.fab.fa-google {
+        font-size: 2.5rem;
+        color: #4285F4;
+        margin-bottom: 15px;
+        display: block;
+    }
+    
+    .google-account-notice h4 {
+        color: #333;
+        margin-bottom: 10px;
+    }
+    
+    .google-account-notice p {
+        color: #6c757d;
+        margin-bottom: 15px;
+    }
+    
+    /* For Google-managed fields */
+    input[readonly] {
+        background-color: #f8f9fa;
+        cursor: not-allowed;
+        opacity: 0.7;
+    }
+    
+    .input-hint {
+        font-size: 0.8rem;
+        color: #6c757d;
+        margin-top: 5px;
+    }
+    
+    /* Google indicator badge */
+    .google-badge {
+        display: inline-flex;
+        align-items: center;
+        background-color: #4285F4;
+        color: white;
+        padding: 3px 8px;
+        border-radius: 16px;
+        font-size: 0.75rem;
+        margin-left: 10px;
+    }
+    
+    .google-badge i {
+        margin-right: 4px;
+    }
+    
+    /* Password validation styles moved to style.css */
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-edit-page">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <!-- Navigation -->
+                <div class="mb-4">
+                    <a href="{{ url_for('index') }}" class="back-link">
+                        <i class="fas fa-arrow-left"></i>
+                        <span>Back to Home</span>
+                    </a>
+                </div>
+                
+                <!-- Header -->
+                <div class="profile-header">
+                    <h1>Edit Profile {% if is_google_user %} <span class="google-badge"> <i class="fab fa-google"> </i></span> {% endif %}</h1>
+                    <p>{% if is_google_user %}View{% else %}Update{% endif %} your personal information and security settings</p>
+                </div>
+                
+                <!-- Profile Edit Form -->
+                <div class="profile-edit-container">
+                    <form method="POST" enctype="multipart/form-data">
+                        
+                        <div class="profile-content">
+                            <!-- Profile Picture Area -->
+                            <div class="profile-picture-area">
+                                <div class="profile-picture-container">
+                                    <div class="profile-wrapper">
+                                        <div class="circle-bg">
+                                            <div class="inner-circle">
+                                                {% if user.profile_pic %}
+                                                    <img src="{{ user.profile_pic }}" alt="Profile Picture">
+                                                {% else %}
+                                                    <span>{{ user.first_name[0]|upper }}</span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        {% if not is_google_user %}
+                                            <label for="profile_pic" class="edit-button">✏️ Edit</label>
+                                        {% endif %}
+                                    </div>
+                                    <input type="file" class="form-control d-none" id="profile_pic" name="profile_pic" 
+                                           accept=".png,.jpg,.jpeg,.gif" {% if is_google_user %}disabled{% endif %}>
+                                    <div class="picture-info">
+                                        <p class="file-info">
+                                            <span class="file-label">Accepted formats:</span>
+                                            <span class="file-types">PNG, JPG, JPEG, GIF</span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Profile Form Area -->
+                            <div class="profile-form-area">
+                                <!-- Profile Tabs -->
+                                <div class="profile-tabs">
+                                    <div class="profile-tab active" data-tab="personal">Personal Information</div>
+                                    <div class="profile-tab" data-tab="security">Security</div>
+                                </div>
+                                
+                                <!-- Personal Information Section -->
+                                <div id="personal-section" class="profile-section active">
+                                    <h3 class="section-title">Personal Information</h3>
+                                    
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="first_name">First Name</label>
+                                            <input type="text" id="first_name" name="first_name" 
+                                                   value="{{ user.first_name }}" required {% if is_google_user %}readonly{% endif %}>
+                                            {% if is_google_user %}<p class="input-hint">Managed by Google</p>{% endif %}
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                            <label for="last_name">Last Name</label>
+                                            <input type="text" id="last_name" name="last_name" 
+                                                   value="{{ user.last_name }}" required {% if is_google_user %}readonly{% endif %}>
+                                            {% if is_google_user %}<p class="input-hint">Managed by Google</p>{% endif %}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group full-width">
+                                        <label for="email">Email Address</label>
+                                        <input type="email" id="email" name="email" 
+                                               value="{{ user.email }}" required {% if is_google_user %}readonly{% endif %}>
+                                        {% if is_google_user %}<p class="input-hint">Managed by Google</p>{% endif %}
+                                    </div>
+                                </div>
+                                
+                                <!-- Security Section -->
+                                <div id="security-section" class="profile-section">
+                                    <h3 class="section-title">Security</h3>
+                                    
+                                    {% if is_google_user %}
+                                    <div class="google-account-notice">
+                                        <h4>Google-Managed Account</h4>
+                                        <p>Your account is managed by Google. Security settings like password and email can only be changed through your Google account.</p>
+                                        <a href="https://myaccount.google.com/" target="_blank" class="btn btn-outline-primary">Manage Google Account</a>
+                                    </div>
+                                    {% else %}
+                                    <div class="form-group full-width">
+                                        <label for="current_password">Current Password</label>
+                                        <input type="password" id="current_password" name="current_password" 
+                                               placeholder="Enter your current password">
+                                        <p class="input-hint">Required to make password changes</p>
+                                    </div>
+                                    
+                                    <div class="form-group full-width">
+                                        <label for="new_password">New Password</label>
+                                        <input type="password" id="new_password" name="new_password" 
+                                               placeholder="Enter new password">
+                                        <p class="input-hint">Password must be at least 8 characters long</p>
+                                    </div>
+                                    
+                                    <div class="form-group full-width">
+                                        <label for="confirm_password">Confirm Password</label>
+                                        <input type="password" id="confirm_password" name="confirm_password" 
+                                               placeholder="Confirm your new password">
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <!-- Form Actions -->
+                                <div class="form-actions">
+                                    {% if not is_google_user %}
+                                    <button type="submit" class="btn-save">Save Changes</button>
+                                    {% endif %}
+                                    <a href="{{ url_for('index') }}" class="btn-cancel">{% if is_google_user %}Back{% else %}Cancel{% endif %}</a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM fully loaded, initializing profile edit scripts');
+        
+        // Tab switching functionality
+        const tabs = document.querySelectorAll('.profile-tab');
+        const sections = document.querySelectorAll('.profile-section');
+        
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Remove active class from all tabs and sections
+                tabs.forEach(t => t.classList.remove('active'));
+                sections.forEach(s => s.classList.remove('active'));
+                
+                // Add active class to clicked tab
+                this.classList.add('active');
+                
+                // Show corresponding section
+                const tabId = this.getAttribute('data-tab');
+                document.getElementById(tabId + '-section').classList.add('active');
+            });
+        });
+        
+        // Reference to the file input
+        const fileInput = document.getElementById('profile_pic');
+        
+        if (!fileInput) {
+            console.error('File input not found');
+        }
+        
+        // Real-time password validation
+        const currentPasswordField = document.getElementById('current_password');
+        const newPasswordField = document.getElementById('new_password');
+        const confirmPasswordField = document.getElementById('confirm_password');
+        
+        // Create validation message containers
+        const newPasswordValidation = document.createElement('div');
+        newPasswordValidation.className = 'password-validation';
+        newPasswordField.parentNode.appendChild(newPasswordValidation);
+        
+        const confirmPasswordValidation = document.createElement('div');
+        confirmPasswordValidation.className = 'password-validation';
+        confirmPasswordField.parentNode.appendChild(confirmPasswordValidation);
+        
+        const currentPasswordValidation = document.createElement('div');
+        currentPasswordValidation.className = 'password-validation';
+        currentPasswordField.parentNode.appendChild(currentPasswordValidation);
+        
+        // Password requirements
+        const requirements = [
+            { regex: /.{8,}/, text: 'At least 8 characters' },
+            { regex: /[A-Z]/, text: 'At least one uppercase letter' },
+            { regex: /[a-z]/, text: 'At least one lowercase letter' },
+            { regex: /[0-9]/, text: 'At least one number' },
+            { regex: /[^A-Za-z0-9]/, text: 'At least one special character' }
+        ];
+        
+        // Create requirement elements
+        requirements.forEach(req => {
+            const element = document.createElement('p');
+            element.className = 'requirement';
+            element.innerHTML = `<i class="fas fa-circle"></i> ${req.text}`;
+            newPasswordValidation.appendChild(element);
+        });
+        
+        // Check current password is filled when new password is entered
+        function validateCurrentPassword() {
+            if (newPasswordField.value && !currentPasswordField.value) {
+                currentPasswordValidation.innerHTML = '<p class="requirement invalid"><i class="fas fa-times-circle"></i> Current password is required</p>';
+                return false;
+            } else {
+                currentPasswordValidation.innerHTML = '';
+                return true;
+            }
+        }
+        
+        // Check password complexity
+        function validateNewPassword() {
+            if (!newPasswordField.value) {
+                newPasswordValidation.style.display = 'none';
+                return false;
+            }
+            
+            newPasswordValidation.style.display = 'block';
+            // Position the validation box correctly
+            positionValidationBox(newPasswordField, newPasswordValidation);
+            let valid = true;
+            
+            // Check each requirement
+            const reqElements = newPasswordValidation.querySelectorAll('.requirement');
+            requirements.forEach((req, i) => {
+                const isValid = req.regex.test(newPasswordField.value);
+                reqElements[i].className = `requirement ${isValid ? 'valid' : 'invalid'}`;
+                reqElements[i].querySelector('i').className = isValid ? 'fas fa-check-circle' : 'fas fa-times-circle';
+                if (!isValid) valid = false;
+            });
+            
+            return valid;
+        }
+        
+        // Check if passwords match
+        function validateConfirmPassword() {
+            if (!confirmPasswordField.value || !newPasswordField.value) {
+                confirmPasswordValidation.style.display = 'none';
+                return false;
+            }
+            
+            confirmPasswordValidation.style.display = 'block';
+            positionValidationBox(confirmPasswordField, confirmPasswordValidation);
+            
+            if (confirmPasswordField.value === newPasswordField.value) {
+                confirmPasswordValidation.innerHTML = '<p class="requirement valid"><i class="fas fa-check-circle"></i> Passwords match</p>';
+                return true;
+            } else {
+                confirmPasswordValidation.innerHTML = '<p class="requirement invalid"><i class="fas fa-times-circle"></i> Passwords do not match</p>';
+                return false;
+            }
+        }
+        
+        // Function to position validation box
+        function positionValidationBox(inputField, validationBox) {
+            // Position based on input field
+            const rect = inputField.getBoundingClientRect();
+            validationBox.style.top = `${inputField.offsetHeight}px`;
+        }
+        
+        // Add event listeners
+        newPasswordField.addEventListener('input', function() {
+            validateNewPassword();
+            validateCurrentPassword();
+            validateConfirmPassword();
+        });
+        
+        // Add focus/blur events to show/hide validation
+        newPasswordField.addEventListener('focus', function() {
+            if (this.value) {
+                validateNewPassword();
+            }
+        });
+        
+        newPasswordField.addEventListener('blur', function() {
+            // Keep validation visible if there are errors and the field has a value
+            if (!validateNewPassword() && this.value) {
+                newPasswordValidation.style.display = 'block';
+            } else {
+                newPasswordValidation.style.display = 'none';
+            }
+        });
+        
+        confirmPasswordField.addEventListener('input', validateConfirmPassword);
+        
+        confirmPasswordField.addEventListener('focus', function() {
+            if (this.value && newPasswordField.value) {
+                validateConfirmPassword();
+            }
+        });
+        
+        confirmPasswordField.addEventListener('blur', function() {
+            // Hide validation on blur
+            setTimeout(() => {
+                confirmPasswordValidation.style.display = 'none';
+            }, 200);
+        });
+        
+        currentPasswordField.addEventListener('input', validateCurrentPassword);
+        
+        currentPasswordField.addEventListener('focus', function() {
+            if (newPasswordField.value && !this.value) {
+                validateCurrentPassword();
+                currentPasswordValidation.style.display = 'block';
+                positionValidationBox(currentPasswordField, currentPasswordValidation);
+            }
+        });
+        
+        currentPasswordField.addEventListener('blur', function() {
+            setTimeout(() => {
+                currentPasswordValidation.style.display = 'none';
+            }, 200);
+        });
+        
+        // Form submission validation
+        document.querySelector('form').addEventListener('submit', function(e) {
+            if (newPasswordField.value) {
+                const currentValid = validateCurrentPassword();
+                const newValid = validateNewPassword();
+                const confirmValid = validateConfirmPassword();
+                
+                if (!(currentValid && newValid && confirmValid)) {
+                    e.preventDefault();
+                    alert('Please fix the password validation issues before submitting.');
+                }
+            }
+        });
+
+        
+        // Preview image when file is selected
+        if (fileInput) {
+            fileInput.addEventListener('change', function() {
+                console.log('File input changed. Files:', this.files ? this.files.length : 0);
+                if (this.files && this.files[0]) {
+                    console.log('Selected file:', this.files[0].name, 'Size:', this.files[0].size);
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        // Check if there's an existing image in the inner circle
+                        let innerCircle = document.querySelector('.inner-circle');
+                        if (innerCircle) {
+                            // Clear the inner circle content
+                            innerCircle.innerHTML = '';
+                            
+                            // Create and add an image
+                            let img = document.createElement('img');
+                            img.src = e.target.result;
+                            img.alt = 'Profile Picture';
+                            innerCircle.appendChild(img);
+                            console.log('Image preview updated');
+                        } else {
+                            console.error('Inner circle element not found');
+                        }
+                    };
+                    reader.readAsDataURL(this.files[0]);
+                }
+            });
+        }
+    });
+</script>
+
+<!-- Styles moved to style.css -->
+{% endblock %} 

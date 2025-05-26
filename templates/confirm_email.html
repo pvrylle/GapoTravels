@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% block title %}Email Verification{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center align-items-center min-vh-75">
+        <div class="col-md-6 text-center">
+            <div class="verification-card">
+                {% if confirmed %}
+                    <div class="verification-success">
+                        <div class="success-icon mb-4">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <h2 class="mb-3">Welcome to GapoTravels!</h2>
+                        <p class="lead mb-4">Your email has been verified successfully.</p>
+                        <p class="text-muted mb-4">You can now explore destinations, write reviews, and connect with other travelers.</p>
+                        <div class="d-grid gap-3">
+                            <a href="{{ url_for('index') }}" class="btn btn-primary btn-lg">
+                                <i class="fas fa-compass me-2"></i>Start Exploring
+                            </a>
+                        </div>
+                    </div>
+                {% elif expired %}
+                    <div class="verification-error">
+                        <div class="error-icon mb-4">
+                            <i class="fas fa-exclamation-circle"></i>
+                        </div>
+                        <h2 class="mb-3">Link Expired</h2>
+                        <p class="lead mb-4">This verification link has expired.</p>
+                        <p class="text-muted mb-4">Please request a new verification email to complete your registration.</p>
+                        <a href="{{ url_for('login') }}" class="btn btn-outline-primary btn-lg">
+                            <i class="fas fa-arrow-left me-2"></i>Return to Login
+                        </a>
+                    </div>
+                {% elif invalid %}
+                    <div class="verification-error">
+                        <div class="error-icon mb-4">
+                            <i class="fas fa-times-circle"></i>
+                        </div>
+                        <h2 class="mb-3">Invalid Link</h2>
+                        <p class="lead mb-4">This verification link is invalid.</p>
+                        <p class="text-muted mb-4">Please try again or request a new verification email.</p>
+                        <a href="{{ url_for('login') }}" class="btn btn-outline-primary btn-lg">
+                            <i class="fas fa-arrow-left me-2"></i>Return to Login
+                        </a>
+                    </div>
+                {% else %}
+                    <div class="verification-pending">
+                        <div class="spinner-wrapper mb-4">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                        <h2 class="mb-3">Verifying Your Email</h2>
+                        <p class="lead mb-4">Please wait while we confirm your email address...</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.verification-card {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    padding: 3rem;
+    margin: 2rem 0;
+}
+
+.success-icon,
+.error-icon {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+}
+
+.success-icon {
+    color: var(--auth-color);
+}
+
+.error-icon {
+    color: #dc3545;
+}
+
+.verification-success {
+    color: #2c3e50;
+}
+
+.verification-error {
+    color: #2c3e50;
+}
+
+.verification-pending {
+    color: #2c3e50;
+}
+
+.spinner-wrapper {
+    height: 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.spinner-border {
+    width: 3rem;
+    height: 3rem;
+    color: var(--auth-color) !important;
+}
+
+.lead {
+    font-size: 1.25rem;
+    font-weight: 500;
+}
+
+.text-muted {
+    color: #6c757d !important;
+}
+
+.btn-primary {
+    background: var(--auth-color);
+    border-color: var(--auth-color);
+    padding: 1rem 2rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background: #037029;
+    border-color: #037029;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(6, 177, 61, 0.2);
+}
+
+.btn-outline-primary {
+    color: var(--auth-color);
+    border-color: var(--auth-color);
+    padding: 1rem 2rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-primary:hover {
+    background: var(--auth-color);
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(6, 177, 61, 0.2);
+}
+
+@media (max-width: 768px) {
+    .verification-card {
+        padding: 2rem;
+        margin: 1rem 0;
+    }
+    
+    .success-icon,
+    .error-icon {
+        font-size: 3rem;
+    }
+    
+    .btn-primary,
+    .btn-outline-primary {
+        padding: 0.75rem 1.5rem;
+    }
+}
+</style>
+{% endblock %} 

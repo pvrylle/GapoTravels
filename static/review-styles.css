@@ -1,0 +1,138 @@
+/* Review rotation transition effects */
+#reviews-container {
+    position: relative;
+    transition: opacity 0.5s ease;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+#reviews-container.fade-out {
+    opacity: 0;
+}
+
+#reviews-container.fade-in {
+    opacity: 1;
+}
+
+.review-card {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: var(--card-shadow);
+    padding: 20px;
+    margin-bottom: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    width: calc(25% - 20px);
+    animation: fadeIn 0.5s ease forwards;
+    opacity: 0;
+}
+
+@media (max-width: 1200px) {
+    .review-card {
+        width: calc(33.33% - 20px);
+    }
+}
+
+@media (max-width: 992px) {
+    .review-card {
+        width: calc(50% - 20px);
+    }
+}
+
+@media (max-width: 576px) {
+    .review-card {
+        width: 100%;
+    }
+}
+
+.review-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(40, 201, 151, 0.15);
+}
+
+.review-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.review-header img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 15px;
+    border: 2px solid var(--primary-color);
+}
+
+.review-meta h5 {
+    margin: 0;
+    font-size: 16px;
+    color: var(--text-primary);
+}
+
+.review-meta small {
+    color: #777;
+    font-size: 12px;
+}
+
+.rating {
+    color: var(--accent-color);
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+
+.review-content {
+    margin-bottom: 15px;
+}
+
+.review-text-container {
+    max-height: 80px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.review-text {
+    margin: 0;
+    color: var(--text-primary);
+}
+
+.see-more-btn {
+    background: none;
+    border: none;
+    color: var(--primary-color);
+    padding: 0;
+    font-size: 14px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.review-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #eee;
+    padding-top: 10px;
+}
+
+.review-destination {
+    color: #777;
+    font-size: 14px;
+}
+
+.review-destination i {
+    color: var(--primary-color);
+    margin-right: 5px;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

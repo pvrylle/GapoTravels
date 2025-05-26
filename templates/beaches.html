@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block title %}Beaches{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="mb-3">
+        <a href="{{ url_for('index') }}#destinations" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Destinations
+        </a>
+    </div>
+
+    <div class="category-header text-center">
+        <h1><i class="fas fa-umbrella-beach"></i> Beaches</h1>
+        <p class="lead">Discover the beautiful beaches of Olongapo City</p>
+    </div>
+
+    <div class="destination-grid">
+        {% for beach in [
+            {
+                'name': 'All Hands Beach',
+                'description': 'Family-friendly beach with clear waters, white sand, and picnic spots',
+                'image': 'all_hands_beach.jpg',
+                'amenities': ['Swimming', 'Resorts', 'Water Sports']
+            },
+            {
+                'name': 'Baloy Long Beach',
+                'description': 'Popular beach strip with resorts, water activities, and vibrant nightlifes',
+                'image': 'baloy_long_beach.jpeg',
+                'amenities': ['Swimming', 'Resorts', 'Nightlife']
+            },
+            {
+                'name': 'Blue Rock Beach Resort',
+                'description': 'Beachfront resort offering top-notch amenities and great views',
+                'image': 'blue_rock_resort.jpg',
+                'amenities': ['Swimming Pool', 'Restaurant', 'Water Sports']
+            },
+            {
+                'name': 'Grande Island Resort',
+                'description': 'Island resort with pristine beaches',
+                'image': 'grande_island.jpg',
+                'amenities': ['Swimming Pool', 'Restaurant', 'Water Sports']
+            },
+            {
+                'name': 'SBMA Beach',
+                'description': 'Scenic beach with stunning views of Subic Bay, perfect for relaxation',
+                'image': 'subic_beach.jpg',
+                'amenities': ['Sunset Views', 'Swimming', 'Photography']
+            },
+            {
+                'name': 'SBMA Waterfront Beach',
+                'description': 'Tranquil beach with calm waters, ideal for families and picnics',
+                'image': 'water_front_beach.jpg',
+                'amenities': ['Swimming', 'Picnics', 'Photography']
+            },
+            {
+                'name': 'White Rock Beach',
+                'description': 'Beautiful white sand beach with clear waters',
+                'image': 'white_rock_beach.jpg',
+                'amenities': ['Swimming', 'Sunset Views', 'Photography']
+            }
+        ] %}
+        <div class="destination-card">
+            <div class="card-img-container">
+                <img src="{{ url_for('static', filename='images/' + beach.image) }}" 
+                     class="card-img" alt="{{ beach.name }}"
+                     onerror="this.src='/static/images/placeholder.png'">
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">{{ beach.name }}</h5>
+                <p class="card-text">{{ beach.description }}</p>
+                <div class="amenities">
+                    {% for amenity in beach.amenities %}
+                    <span class="badge">
+                        <i class="fas fa-check"></i> {{ amenity }}
+                    </span>
+                    {% endfor %}
+                </div>
+                <div class="card-actions">
+                    <a href="{{ url_for('map') }}#{{ beach.name.replace(' ', '-') }}" 
+                       class="btn btn-primary">
+                        <i class="fas fa-map-marked-alt"></i> View on Map
+                    </a>
+                    <button type="button" 
+                            class="btn btn-outline-primary" 
+                            onclick="showReviewModal('{{ beach.name }}')">
+                        <i class="fas fa-star"></i> Add Review
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Review Modal (Redesigned) -->
+<div class="modal fade" id="reviewModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content review-modal-content">
+            <div class="modal-header review-modal-header">
+                <div class="review-modal-title-container">
+                    <div class="review-icon-container">
+                        <i class="fas fa-pen-fancy review-icon"></i>
+                    </div>
+                    <h5 class="modal-title fw-bold">Share Your Experience</h5>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ url_for('add_review') }}" method="POST" class="review-form">
+                <div class="modal-body review-modal-body">
+                    <input type="hidden" name="destination" id="reviewDestination">
+                    
+                    <!-- Destination Name Display -->
+                    <p id="modalDestination" class="fw-bold mb-4 text-primary"></p>
+                    
+                    <div class="mb-4">
+                        <label class="d-block mb-2">Your Rating</label>
+                        <div class="rating-selector" id="starRating">
+                            <input type="radio" id="star5" name="rating" value="5">
+                            <label for="star5" title="Excellent"><i class="fas fa-star"></i></label>
+                            <input type="radio" id="star4" name="rating" value="4">
+                            <label for="star4" title="Very Good"><i class="fas fa-star"></i></label>
+                            <input type="radio" id="star3" name="rating" value="3">
+                            <label for="star3" title="Good"><i class="fas fa-star"></i></label>
+                            <input type="radio" id="star2" name="rating" value="2">
+                            <label for="star2" title="Fair"><i class="fas fa-star"></i></label>
+                            <input type="radio" id="star1" name="rating" value="1">
+                            <label for="star1" title="Poor"><i class="fas fa-star"></i></label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-floating mb-3">
+                        <textarea name="content" id="review" class="form-control" placeholder="Share your experience..."></textarea>
+                        <label for="review">Tell us about your experience...</label>
+                    </div>
+                </div>
+                
+                <div class="modal-footer review-modal-footer">
+                    <button type="submit" class="btn submit-review-btn">
+                        <span class="btn-content">
+                            <i class="fas fa-paper-plane"></i>
+                            <span class="btn-text">Share Your Review</span>
+                        </span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block title %}Sign Up{% endblock %}
+
+{% block content %}
+<div class="signup-container signup">
+    <div class="button-back">
+        <a href="{{ url_for('index') }}#home" class="btn btn-outline-secondary" title="Back to Home Page">
+            <i class="fas fa-arrow-left"></i> 
+            <span class="back-text">Back to Home Page</span>
+        </a>        
+    </div>
+
+    <div class="signup-holder row g-0 h-100">
+        <!-- Left Image Panel -->
+        <div class="col-lg-6 d-none d-lg-block order-lg-1 order-1 animate-left">
+            <div class="forgot-password-image-container  style="z-index: 1000;">
+                <div class="overlay"></div>
+                <div class="forgot-password-hero-content">
+                    <img src="{{ url_for('static', filename='images/logogt.png') }}" alt="GapoTravels Logo" class="responsive-logo mb-4">
+                    <h2>Join GapoTravels</h2>
+                    <p>Discover Olongapo like never before – your next adventure starts here!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Signup Form Panel -->
+        <div class="col-lg-6 col-md-12 order-lg-2 order-2 d-flex align-items-center justify-content-center animate-right">
+            <div class="forgot-password-form-container d-flex flex-column justify-content-center w-100">
+                <div class="forgot-password-form-wrapper ">
+                    <img src="{{ url_for('static', filename='images/logogt.png') }}" alt="GapoTravels Logo" class="responsive-logo mb-4">
+                    <form method="POST" enctype="multipart/form-data" id="signupForm">
+                        <div class="text-center mb-4">
+                            <h3 class="fw-bold text-primary">Create Account</h3>
+                            <p class="text-muted small mb-0">Join GapoTravels today</p>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control form-control-lg" id="first_name" name="first_name" placeholder=" " value="{{ first_name or '' }}">
+                            <label for="first_name">First Name</label>
+                        </div>
+                        
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control form-control-lg" id="last_name" name="last_name" placeholder=" " value="{{ last_name or '' }}">
+                            <label for="last_name">Last Name</label>
+                        </div>
+                        
+                        <div class="form-floating mb-3">
+                            <input type="email" class="form-control" id="email" name="email" placeholder=" " value="{{ email or '' }}">
+                            <label for="email">Email</label>
+                        </div>                        
+
+                        <div class="form-floating mb-3 position-relative">
+                            <input type="password" class="form-control pe-5" id="signup_password" name="password" placeholder=" ">
+                            <label for="signup_password"></i>Password</label>
+                            <span class="position-absolute top-50 end-0 translate-middle-y me-3 text-muted" style="cursor: pointer;" onclick="togglePassword('signup_password', this)">
+                                <i class="fas fa-eye" style="color: black;"></i>
+                            </span>                            
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="privacy_agreement" name="privacy_agreement" 
+                                    oninvalid="this.setCustomValidity('You must agree to our Privacy Policy to create an account')"
+                                    oninput="this.setCustomValidity('')">
+                                <label class="form-check-label small" for="privacy_agreement">
+                                    I agree to the <a href="#" data-bs-toggle="modal" data-bs-target="#privacyModal">Privacy Policy</a>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 mb-3">
+                            <button type="submit" class="btn btn-primary btn-lg">Create Account</button>
+                        </div>
+
+                        <div class="text-center mt-3">
+                            <p class="mb-0 small">Already have an account?
+                              <a href="{{ url_for('login') }}" class="text-primary" id="login-link">Sign in</a>
+                            </p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Reuse Privacy Modal -->
+<div class="modal fade" id="privacyModal" tabindex="-1" aria-labelledby="privacyModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="privacyModalLabel">
+                    <i class="fas fa-shield-alt me-2"></i>Privacy Policy
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="privacy-grid">
+                    <div class="mini-privacy-section">
+                        <h6><i class="fas fa-database text-primary me-2"></i>Data Collection</h6>
+                        <p class="small mb-0">We collect only essential information needed to provide our services, including your name, email, and profile picture (optional).</p>
+                    </div>
+                    
+                    <div class="mini-privacy-section">
+                        <h6><i class="fas fa-lock text-primary me-2"></i>Data Protection</h6>
+                        <p class="small mb-0">Your data is encrypted and stored securely following industry standards. We comply with the Data Privacy Act of 2012 (RA 10173).</p>
+                    </div>
+                    
+                    <div class="mini-privacy-section">
+                        <h6><i class="fas fa-user-edit text-primary me-2"></i>Your Rights</h6>
+                        <p class="small mb-0">You can access, update, or delete your personal information at any time through your account settings.</p>
+                    </div>
+                    
+                    <div class="mini-privacy-section">
+                        <h6><i class="fas fa-gavel text-primary me-2"></i>Legal Compliance</h6>
+                        <p class="small mb-0">GapoTravels complies with Philippine laws including the Data Privacy Act (RA 10173) and E-Commerce Act (RA 8792).</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">I Understand</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

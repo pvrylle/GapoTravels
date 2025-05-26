@@ -1,0 +1,714 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block head %}
+<!-- Add Leaflet CSS and JS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+<!-- Photo gallery styles -->
+{% endblock %}
+{% block content %}
+<div class="hero-section">
+    <div class="hero-content">
+        <h1>
+            <span>Discover Olongapo</span>
+            <span>Find your next adventure in</span>
+            <span>GapoTravels</span>
+        </h1>
+        <p class="lead">Explore the hidden gems, beaches, historical sites, and local experiences</p>
+        
+        <div class="hero-search">
+            <form id="searchForm" action="{{ url_for('map') }}" method="GET">
+                <div class="input-group">
+                    <input type="text" class="form-control" id="destinationSearchInput" name="search"
+                           placeholder="Search for beaches, restaurants, landmarks..." 
+                           autocomplete="off">
+                    <button type="submit" class="input-group-text" id="searchButton">
+                        <i class="fas fa-search me-2"></i> Search
+                    </button>
+                </div>
+            </form>
+            
+            <!-- Destination Suggestions -->
+            <div class="destination-suggestions" id="destinationSuggestions">
+                <!-- Suggestions will be dynamically added here -->
+            </div>
+        </div>
+        
+        <div class="hero-buttons">
+            <a href="{{ url_for('map') }}" class="btn-map-large">
+                <i class="fas fa-map-marked-alt"></i>
+                <span>INTERACTIVE MAP</span>
+            </a>
+            <a href="#destinations" class="btn btn-hero btn-outline-light">
+                <i class="fas fa-compass"></i>
+                <span>Browse&nbsp;Categories</span>
+            </a>
+        </div>
+    </div>
+    
+    <div class="scroll-down">
+        <i class="fas fa-chevron-down fa-2x"></i>
+    </div>
+</div>
+
+<!-- Destinations Section -->
+<div id="destinations" class="container">
+    <div class="section-header text-center mb-5">
+        <h2></i> Explore Our Destinations</h2>
+        <p class="lead">Discover the beauty of Olongapo City & Subic Bay Freeport Zone</p>
+    </div>
+    
+    <div class="destination-carousel-container">
+        <div id="destinationCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="false">
+            <div class="carousel-inner">
+                <!-- First slide (3 cards) -->
+                <div class="carousel-item active">
+                    <div class="row">
+                        <!-- Beaches -->
+                        <div class="col-md-4">
+                            <div class="card h-100">
+                                <img src="{{ url_for('static', filename='images/all-hands.jpg') }}" class="card-img-top" alt="Beaches">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title"><i class="fas fa-umbrella-beach"></i> Beaches</h5>
+                                    <p class="card-text">Discover beaches and coastal destinations.</p>
+                                    <a href="{{ url_for('beaches') }}" class="btn btn-primary">
+                                        <i class="fas fa-map-marked-alt"></i> Explore
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Nature -->
+                        <div class="col-md-4">
+                            <div class="card h-100">
+                                <img src="{{ url_for('static', filename='images/hidden_gem.jpeg') }}" class="card-img-top" alt="Nature">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title"><i class="fas fa-tree"></i> Nature</h5>
+                                    <p class="card-text">Discover scenic and natural wonders.</p>
+                                    <a href="{{ url_for('nature') }}" class="btn btn-primary">
+                                        <i class="fas fa-map-marked-alt"></i> Explore
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Historical Sites -->
+                        <div class="col-md-4">
+                            <div class="card h-100">
+                                <img src="{{ url_for('static', filename='images/ulo_ng_apo.jpg') }}" class="card-img-top" alt="Historical Sites">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title"><i class="fas fa-landmark"></i> History</h5>
+                                    <p class="card-text">Visit historical landmarks and sites.</p>
+                                    <a href="{{ url_for('historical') }}" class="btn btn-primary">
+                                        <i class="fas fa-map-marked-alt"></i> Explore
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Second slide (3 cards) -->
+                <div class="carousel-item">
+                    <div class="row">
+                        <!-- Food & Dining -->
+                        <div class="col-md-4">
+                            <div class="card h-100">
+                                <img src="{{ url_for('static', filename='images/food_grilled.jpg') }}" class="card-img-top" alt="Food & Dining">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title"><i class="fas fa-utensils"></i> Food</h5>
+                                    <p class="card-text">Taste local delicacies and dining experiences.</p>
+                                    <a href="{{ url_for('food') }}" class="btn btn-primary">
+                                        <i class="fas fa-map-marked-alt"></i> Explore
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Shopping -->
+                        <div class="col-md-4">
+                            <div class="card h-100">
+                                <img src="{{ url_for('static', filename='images/sm_central.jpg') }}" class="card-img-top" alt="Shopping">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title"><i class="fas fa-shopping-bag"></i> Shopping</h5>
+                                    <p class="card-text">Discover malls, markets, and shopping districts.</p>
+                                    <a href="{{ url_for('shopping') }}" class="btn btn-primary">
+                                        <i class="fas fa-map-marked-alt"></i> Explore
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Nightlife -->
+                        <div class="col-md-4">
+                            <div class="card h-100">
+                                <img src="{{ url_for('static', filename='images/nightlife.jpg') }}" class="card-img-top" alt="Nightlife">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title"><i class="fas fa-moon"></i> Nightlife</h5>
+                                    <p class="card-text">Experience entertainment and evening activities.</p>
+                                    <a href="{{ url_for('nightlife') }}" class="btn btn-primary">
+                                        <i class="fas fa-map-marked-alt"></i> Explore
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Carousel Controls -->
+            <button class="carousel-control-prev" type="button" data-bs-target="#destinationCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#destinationCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+
+            
+            <!-- Mobile Navigation Buttons -->
+            <div class="mobile-carousel-controls d-md-none text-center mt-3">
+                <button type="button" class="btn btn-carousel" data-bs-target="#destinationCarousel" data-bs-slide="prev">
+                    <i class="fas fa-chevron-left"></i> Previous
+                </button>
+                <button type="button" class="btn btn-carousel" data-bs-target="#destinationCarousel" data-bs-slide="next">
+                    Next <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Reviews Section -->
+<div class="row mt-4" id="reviews">
+    <div class="col-12">
+        <h2>Reviews</h2>
+        <!-- Display Reviews -->
+        <div id="reviews-container">
+            <!-- Reviews will be loaded here dynamically -->
+        </div> 
+        <div class="text-center">
+        {% if current_user.is_authenticated %}
+                <button type="button" class="add-review-btn" data-bs-toggle="modal" data-bs-target="#reviewModal">
+                    <i class="fas fa-plus"></i> Write a Review
+                </button>
+            {% else %}
+                <button type="button" class="add-review-btn" data-bs-toggle="modal" data-bs-target="#loginModal">
+                    <i class="fas fa-plus"></i> Write a Review
+                </button>
+            {% endif %}
+        </div>
+
+        <!-- Review Modal (Redesigned) -->
+        <div class="modal fade" id="reviewModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content review-modal-content">
+                    <div class="modal-header review-modal-header">
+                        <div class="review-modal-title-container">
+                            <div class="review-icon-container">
+                                <i class="fas fa-pen-fancy review-icon"></i>
+                            </div>
+                            <h5 class="modal-title fw-bold">Share Your Experience</h5>
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form action="{{ url_for('add_review') }}" method="POST" class="review-form">
+                        <div class="modal-body review-modal-body">
+                            <div class="form-floating mb-3">
+                                <select name="destination" id="destinationSelect" class="form-control custom-select">
+                                    <option value="">Choose a destination...</option>
+                                    <option value="SM City Olongapo Central">SM City Olongapo Central</option>
+                                    <option value="Harbor Point">Harbor Point</option>
+                                    <option value="Marikit Park">Marikit Park</option>
+                                    <option value="Olongapo City Public Market">Olongapo City Public Market</option>
+                                    <option value="Rizal Triangle">Rizal Triangle</option>
+                                    <option value="Olongapo City Convention Center">Olongapo City Convention Center</option>
+                                    <option value="custom">Other (specify below)</option>
+                                </select>
+                                <label for="destinationSelect">Where did you go?</label>
+                            </div>
+                            
+                            <div id="customDestinationContainer" class="form-floating mb-3" style="display: none;">
+                                <input type="text" id="customDestination" name="custom_destination" class="form-control" placeholder="Enter destination name">
+                                <label for="customDestination">Custom destination name</label>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="d-block mb-2">Your Rating</label>
+                                <div class="rating-selector">
+                                    <input type="radio" id="star5" name="rating" value="5" required>
+                                    <label for="star5" title="Excellent"><i class="fas fa-star"></i></label>
+                                    <input type="radio" id="star4" name="rating" value="4">
+                                    <label for="star4" title="Very Good"><i class="fas fa-star"></i></label>
+                                    <input type="radio" id="star3" name="rating" value="3">
+                                    <label for="star3" title="Good"><i class="fas fa-star"></i></label>
+                                    <input type="radio" id="star2" name="rating" value="2">
+                                    <label for="star2" title="Fair"><i class="fas fa-star"></i></label>
+                                    <input type="radio" id="star1" name="rating" value="1">
+                                    <label for="star1" title="Poor"><i class="fas fa-star"></i></label>
+                                </div>
+                            </div>
+                            
+                            <div class="form-floating mb-3">
+                                <textarea name="content" id="reviewContent" class="form-control" style="height: 120px" placeholder="Share your experience..."></textarea>
+                                <label for="reviewContent">Tell us about your experience...</label>
+                            </div>
+                        </div>
+                        
+                        <div class="modal-footer review-modal-footer">
+                            <button type="submit" class="btn submit-review-btn">
+                                <span class="btn-content">
+                                    <i class="fas fa-paper-plane"></i>
+                                    <span class="btn-text">Share Your Review</span>
+                                </span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            var currentUserId = "{{ current_user.id if current_user.is_authenticated else '' }}";
+            
+            // Handle custom destination field in review modal
+            document.addEventListener('DOMContentLoaded', function() {
+                const destinationSelect = document.getElementById('destinationSelect');
+                const customDestinationContainer = document.getElementById('customDestinationContainer');
+                
+                if (destinationSelect && customDestinationContainer) {
+                    destinationSelect.addEventListener('change', function() {
+                        if (this.value === 'custom') {
+                            customDestinationContainer.style.display = 'block';
+                        } else {
+                            customDestinationContainer.style.display = 'none';
+                        }
+                    });
+                }
+            });
+        </script>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content text-center">
+            <div class="modal-body py-4">
+                <div class="mb-3">
+                    <i class="fas fa-exclamation-circle text-danger fa-3x"></i>
+                </div>
+                <h5 class="mb-3">Delete Review</h5>
+                <p>Are you sure you want to delete this review?</p>
+                <p class="text-danger"><small>This action cannot be undone.</small></p>
+                <div class="d-flex justify-content-center mt-4" style="gap: 30px;">
+                    <button type="button" style="background: none; color: #26c485; border: none; font-size: 16px; font-weight: 500; cursor: pointer;" data-bs-dismiss="modal">Cancel</button>
+                    <form id="deleteReviewForm" method="POST" style="display: inline;">
+                        <button type="submit" style="background: none; color: #e74c3c; border: none; font-size: 16px; font-weight: 500; cursor: pointer;">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Sample locations data for search functionality
+const locations = [
+{ 
+        name: "All Hands Beach", 
+        description: "Family-friendly beach with clear waters and white sand", 
+        type: "beach" 
+    },
+    { 
+        name: "Baloy Long Beach", 
+        description: "Popular beach strip with resorts, water activities, and vibrant nightlifes", 
+        type: "beach" 
+    },
+    { 
+        name: "Blue Rock Beach Resort", 
+        description: "Beachfront resort offering top-notch amenities and great views", 
+        type: "beach" 
+    },
+    { 
+        name: "Empire", 
+        description: "Trendy nightclub and entertainment spot in Olongapo", 
+        type: "nightlife" 
+    },
+    { 
+        name: "Gerry's Grill", 
+        description: "Filipino restaurant with seafood specialties", 
+        type: "food" 
+    },
+    { 
+        name: "Grande Island Resort", 
+        description: "Island resort with pristine beaches", 
+        type: "beach" 
+    },
+    {
+        name: "Harbor Point", 
+        description: "Modern waterfront mall", 
+        type: "shopping" 
+    },
+    {
+        name: "Hellships Memorial", 
+        description: "Honors World War II prisoners of war", 
+        type: "historical"
+    },
+    { 
+        name: "JEST Camp", 
+        description: "Survival training, bird shows, and jungle fun", 
+        type: "nature" 
+    },
+    { 
+        name: "Marikit Park", 
+        description: "Public park and recreational area", 
+        type: "nature" 
+    },
+    { 
+        name: "Meat Plus", 
+        description: "Famous steakhouse known for quality beef", 
+        type: "food" 
+    },
+    { 
+        name: "SBMA Beach", 
+        description: "Scenic beach with stunning views of Subic Bay, perfect for relaxation", 
+        type: "beach" 
+    },
+    { 
+        name: "SBMA Waterfront Beach", 
+        description: "Tranquil beach with calm waters, ideal for families and picnics", 
+        type: "beach" 
+    },
+    { 
+        name: "White Rock Beach", 
+        description: "Beautiful white sand beach with clear waters", 
+        type: "beach" 
+    },
+    { 
+        name: "Olongapo City Public Market", 
+        description: "Traditional market with fresh produce", 
+        type: "shopping" 
+    },
+    { 
+        name: "Pier One Bar", 
+        description: "Lively waterfront bar with drinks, music, and sea views", 
+        type: "nightlife" 
+    },
+    { 
+        name: "Rizal Triangle", 
+        description: "Historic landmark in the city center", 
+        type: "historical" 
+    },
+    { 
+        name: "SM City Olongapo Central", 
+        description: "Major shopping mall with retail stores, dining, and entertainment", 
+        type: "shopping" 
+    },
+    { 
+        name: "SM City Olongapo Downtown", 
+        description: "Popular mall with shops, dining, and entertainment", 
+        type: "shopping" 
+    },
+    { 
+        name: "Skybar", 
+        description: "Chill rooftop bar offering cocktails and city views", 
+        type: "nightlife" 
+    },
+    { 
+        name: "Waterfront Beach", 
+        description: "Scenic beachfront with sunset views", 
+        type: "beach" 
+    },
+
+    { 
+        name: "Marikit Bar & Lounge", 
+        description: "Modern lounge with live music", 
+        type: "nightlife" 
+    },
+    {
+        name: "Spanish Gate", 
+        description: "Historic entrance to former Spanish Naval Station", 
+        type: "historical"
+    },
+    {
+        name: "USS New York Memorial", 
+        description: "Naval memorial commemorating historical events", 
+        type: "historical"
+    },
+    { 
+        name: "Xtremely Xpresso", 
+        description: "Coffee shop with local brews and pastries", 
+        type: "food" 
+    },
+    { 
+        name: "Zoobic Safari", 
+        description: "Wildlife park with native and exotic animals", 
+        type: "nature" 
+    }
+];
+
+// Function to get icon for location type
+function getIconForType(type) {
+    const icons = {
+        'beach': 'umbrella-beach',
+        'nature': 'tree',
+        'historical': 'landmark',
+        'food': 'utensils',
+        'shopping': 'shopping-bag',
+        'nightlife': 'moon',
+        'default': 'map-marker-alt'
+    };
+    
+    return icons[type] || icons.default;
+}
+
+// Initialize Intersection Observer for animations
+const observerOptions = {
+    root: null,
+    rootMargin: '0px',
+    threshold: 0.1
+};
+
+function handleIntersection(entries) {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.style.transform = 'translateY(0)';
+            entry.target.style.opacity = '1';
+            observer.unobserve(entry.target); // Stop observing once animated
+        }
+    });
+}
+
+const observer = new IntersectionObserver(handleIntersection, observerOptions);
+
+// Add initial styles and observe cards (Don't put on JS file)
+document.addEventListener('DOMContentLoaded', () => {
+    const cards = document.querySelectorAll('.card');
+    cards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        card.style.transition = `all 0.5s ease ${index * 0.1}s`;
+        observer.observe(card); // Make sure you define 'observer' somewhere
+    });
+
+    // Fetch and display reviews
+    fetchReviews();
+});
+
+// Initialize the carousel with touch support and one-by-one sliding
+document.addEventListener('DOMContentLoaded', function() {
+    const carouselElement = document.getElementById('destinationCarousel');
+    
+    // Initialize Bootstrap carousel
+    const carousel = new bootstrap.Carousel(carouselElement, {
+        interval: false,  // Don't auto-rotate
+        touch: true      // Enable touch swiping
+    });
+    
+    // Custom navigation for slide transition
+    let currentIndex = 0;
+    const totalItems = 2; // Only 2 slides now
+    
+    document.querySelector('#destinationCarousel .carousel-control-next').addEventListener('click', function(e) {
+        e.preventDefault();
+        currentIndex = (currentIndex + 1) % totalItems;
+        carousel.to(currentIndex);
+    });
+    
+    document.querySelector('#destinationCarousel .carousel-control-prev').addEventListener('click', function(e) {
+        e.preventDefault();
+        currentIndex = (currentIndex - 1 + totalItems) % totalItems;
+        carousel.to(currentIndex);
+    });
+    
+    // Add swipe gesture support
+    let touchStartX = 0;
+    let touchEndX = 0;
+    
+    carouselElement.addEventListener('touchstart', function(e) {
+        touchStartX = e.changedTouches[0].screenX;
+    });
+    
+    carouselElement.addEventListener('touchend', function(e) {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+    });
+    
+    function handleSwipe() {
+        if (touchEndX < touchStartX) {
+            // Swipe left - next slide
+            document.querySelector('#destinationCarousel .carousel-control-next').click();
+        } else if (touchEndX > touchStartX) {
+            // Swipe right - previous slide
+            document.querySelector('#destinationCarousel .carousel-control-prev').click();
+        }
+    }
+});
+
+// Hero search functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('destinationSearchInput');
+    const suggestionsContainer = document.getElementById('destinationSuggestions');
+    const searchButton = document.getElementById('searchButton');
+    const searchForm = document.getElementById('searchForm');
+    
+    if (searchInput && suggestionsContainer) {
+        // Show suggestions when typing
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase().trim();
+            
+            if (searchTerm.length < 2) {
+                suggestionsContainer.classList.remove('show');
+                return;
+            }
+            
+            // Filter locations based on search term
+            const matchingLocations = locations.filter(location => 
+                location.name.toLowerCase().includes(searchTerm) ||
+                location.type.toLowerCase().includes(searchTerm)
+            );
+            
+            // Build suggestions
+            if (matchingLocations.length > 0) {
+                suggestionsContainer.innerHTML = '';
+                
+                // Limit to 5 suggestions
+                matchingLocations.slice(0, 5).forEach(location => {
+                    const suggestionItem = document.createElement('div');
+                    suggestionItem.className = 'suggestion-item';
+                    suggestionItem.innerHTML = `
+                        <i class="fas fa-${getIconForType(location.type)}"></i>
+                        <div class="suggestion-text">
+                            <div class="suggestion-title">${location.name}</div>
+                        </div>
+                    `;
+                    
+                    // Clicking on a suggestion navigates to the map
+                    suggestionItem.addEventListener('click', function() {
+                        window.location.href = `${window.location.origin}/map?search=${encodeURIComponent(location.name)}`;
+                    });
+                    
+                    suggestionsContainer.appendChild(suggestionItem);
+                });
+                
+                suggestionsContainer.classList.add('show');
+            } else {
+                suggestionsContainer.innerHTML = `
+                    <div class="suggestion-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div class="suggestion-text">
+                            <div class="suggestion-title">No results found</div>
+                            <div class="suggestion-desc">Try a different search term or visit our map</div>
+                        </div>
+                    </div>
+                `;
+                suggestionsContainer.classList.add('show');
+            }
+        });
+        
+        // Form submission
+        searchForm.addEventListener('submit', function(e) {
+            const searchTerm = searchInput.value.trim();
+            if (!searchTerm) {
+                e.preventDefault(); // Prevent empty searches
+            }
+        });
+        
+        // Hide suggestions when clicking elsewhere
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('#destinationSearchInput') && 
+                !event.target.closest('#destinationSuggestions')) {
+                suggestionsContainer.classList.remove('show');
+            }
+        });
+    }
+    
+    // Add smooth scrolling for the scroll-down button
+    document.querySelector('.scroll-down').addEventListener('click', function() {
+        const destinationsSection = document.querySelector('#destinations');
+        if (destinationsSection) {
+            destinationsSection.scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    });
+});
+</script>
+
+<!-- Full Review Modal -->
+<div class="modal fade" id="fullReviewModal" tabindex="-1" aria-labelledby="fullReviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content review-modal-content">
+            <div class="modal-header review-modal-header">
+                <div class="review-modal-title-container">
+                    <div class="review-icon-container">
+                        <i class="fas fa-comment review-icon"></i>
+                    </div>
+                    <h5 class="modal-title fw-bold" id="fullReviewModalLabel">Review Details</h5>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body review-modal-body">
+                <div class="review-details-header">
+                    <div class="review-author-info">
+                        <img id="modalReviewAvatar" src="" alt="User" class="review-modal-avatar">
+                        <div>
+                            <h6 id="modalReviewAuthor" class="mb-0"></h6>
+                            <small id="modalReviewDate" class="text-muted"></small>
+                        </div>
+                    </div>
+                    <div class="rating" id="modalReviewRating"></div>
+                </div>
+                <div class="review-modal-destination">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span id="modalReviewDestination"></span>
+                </div>
+                <div class="review-modal-content mt-3">
+                    <p id="modalReviewContent"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Login Modal for Sign In Prompt - Compact Version -->
+<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm" style="max-width: 300px; margin: auto;">
+        <div class="modal-content" style="border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.15);">
+            <div class="modal-header border-0 p-2" style="justify-content: flex-end;">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center pt-0 pb-4 px-3">
+                <div class="auth-icon-container mb-3" style="background: linear-gradient(135deg, #008FFF, #28C997); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                    <i class="fas fa-pen-nib auth-icon-sm" style="color: white; font-size: 1.2rem;"></i>
+                </div>
+                <h5 class="fw-bold mb-1" style="font-size: 1.1rem;">Share your thoughts</h5>
+                <p class="text-muted small mb-3" style="font-size: 0.85rem;">Help others discover the best of Olongapo</p>
+                <div class="d-grid gap-2 col-10 mx-auto">
+                    <a href="{{ url_for('login') }}" class="btn btn-primary btn-rounded d-flex align-items-center justify-content-center" style="border-radius: 20px; padding: 8px 16px; font-size: 0.9rem;">
+                        <i class="fas fa-sign-in-alt me-2"></i><span>Sign In</span>
+                    </a>
+                    <div class="login-divider" style="margin: 10px 0; position: relative; text-align: center;">
+                        <span style="background-color: white; padding: 0 10px; position: relative; z-index: 1; font-size: 0.8rem; color: #777;">or</span>
+                        <hr style="margin-top: -9px; border-top: 1px solid #e0e0e0;">
+                    </div>
+                    <a href="{{ url_for('signup') }}" class="btn btn-outline-primary btn-rounded d-flex align-items-center justify-content-center" style="border-radius: 20px; padding: 8px 16px; font-size: 0.9rem;">
+                        <i class="fas fa-user-plus me-2"></i><span>Join Now</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.botpress.cloud/webchat/v2.2/inject.js"></script>
+<script src="https://files.bpcontent.cloud/2025/03/02/10/20250302102623-YLZ5U3TA.js"></script>
+
+
+
+{% endblock %}

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>OAuth Callback</title>
+</head>
+<body>
+  <h3>Processing login...</h3>
+  <script>
+    // Parse token from URL hash
+    const hash = window.location.hash.substr(1);
+    const params = new URLSearchParams(hash);
+    const accessToken = params.get('access_token');
+
+    if (!accessToken) {
+      alert('Login failed: No access token found.');
+      window.location.href = '/login';
+    } else {
+      fetch('/callback/google', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ access_token: accessToken }),
+      })
+      .then(res => {
+        if (res.redirected) {
+          window.location.href = res.url;
+        } else {
+          return res.text().then(text => {
+            alert("Login failed: " + text);
+            window.location.href = '/login';
+          });
+        }
+      })
+      .catch(() => {
+        alert('Login failed: Could not communicate with server.');
+        window.location.href = '/login';
+      });
+    }
+  </script>
+</body>
+</html>
