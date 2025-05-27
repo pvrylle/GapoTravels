@@ -135,15 +135,24 @@
       const hash = window.location.hash.substr(1);
       const params = new URLSearchParams(hash);
       const accessToken = params.get('access_token');
+      
+      // Get base URL from current location
+      const baseUrl = window.location.origin;
+      console.log('Current base URL:', baseUrl);
+      
+      // Debug info
+      console.log('Hash:', hash);
+      console.log('Access token:', accessToken ? 'Present' : 'Missing');
 
       if (!accessToken) {
         // Hide preloader and show error
         document.getElementById('preloader').style.display = 'none';
         document.getElementById('content').style.display = 'block';
         alert('Login failed: No access token found.');
-        window.location.href = '/login';
+        window.location.href = baseUrl + '/login';
       } else {
-        fetch('/callback/google', {
+        // Use absolute URL for the callback
+        fetch(baseUrl + '/callback/google', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ access_token: accessToken, mode: 'login' }),
@@ -152,23 +161,27 @@
           // Hide preloader when response is received
           document.getElementById('preloader').style.display = 'none';
           document.getElementById('content').style.display = 'block';
+          console.log('Response status:', res.status);
+          console.log('Redirected:', res.redirected);
           
           if (res.redirected) {
             window.location.href = res.url;
           } else {
             return res.text().then(text => {
+              console.error('Login error:', text);
               alert("Login failed: " + text);
-              window.location.href = '/login';
+              window.location.href = baseUrl + '/login';
             });
           }
         })
-        .catch(() => {
+        .catch((error) => {
           // Hide preloader on error
           document.getElementById('preloader').style.display = 'none';
           document.getElementById('content').style.display = 'block';
           
+          console.error('Fetch error:', error);
           alert('Login failed: Could not communicate with the server.');
-          window.location.href = '/login';
+          window.location.href = baseUrl + '/login';
         });
       }
     });

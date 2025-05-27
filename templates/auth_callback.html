@@ -7,33 +7,47 @@
 <body>
   <h3>Processing login...</h3>
   <script>
+    // Get base URL from current location
+    const baseUrl = window.location.origin;
+    console.log('Current base URL:', baseUrl);
+    
     // Parse token from URL hash
     const hash = window.location.hash.substr(1);
     const params = new URLSearchParams(hash);
     const accessToken = params.get('access_token');
+    
+    // Debug info
+    console.log('Hash:', hash);
+    console.log('Access token:', accessToken ? 'Present' : 'Missing');
 
     if (!accessToken) {
       alert('Login failed: No access token found.');
-      window.location.href = '/login';
+      window.location.href = baseUrl + '/login';
     } else {
-      fetch('/callback/google', {
+      // Use absolute URL for the callback
+      fetch(baseUrl + '/callback/google', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ access_token: accessToken }),
       })
       .then(res => {
+        console.log('Response status:', res.status);
+        console.log('Redirected:', res.redirected);
+        
         if (res.redirected) {
           window.location.href = res.url;
         } else {
           return res.text().then(text => {
+            console.error('Login error:', text);
             alert("Login failed: " + text);
-            window.location.href = '/login';
+            window.location.href = baseUrl + '/login';
           });
         }
       })
-      .catch(() => {
+      .catch((error) => {
+        console.error('Fetch error:', error);
         alert('Login failed: Could not communicate with server.');
-        window.location.href = '/login';
+        window.location.href = baseUrl + '/login';
       });
     }
   </script>
