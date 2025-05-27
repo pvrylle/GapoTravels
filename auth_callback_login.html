@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Google Login Callback</title>
+  <style>
+    /* Preloader styles */
+    .preloader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      background-color: rgba(255, 255, 255, 0); /* Transparent background */
+    }
+    
+    .loader {
+      width: 80px;
+      height: 80px;
+      position: relative;
+    }
+    
+    .loader-ring {
+      box-sizing: border-box;
+      display: block;
+      position: absolute;
+      width: 64px;
+      height: 64px;
+      margin: 8px;
+      border: 4px solid transparent;
+      border-radius: 50%;
+      animation: loader-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    }
+    
+    .loader-ring:nth-child(1) {
+      border-top-color: #008FFF; /* Primary Blue */
+      animation-delay: 0s;
+    }
+    
+    .loader-ring:nth-child(2) {
+      border-right-color: #28C997; /* Primary Green */
+      animation-delay: 0.3s;
+    }
+    
+    .loader-ring:nth-child(3) {
+      border-bottom-color: #008FFF; /* Primary Blue */
+      animation-delay: 0.6s;
+    }
+    
+    .loader-ring:nth-child(4) {
+      border-left-color: #28C997; /* Primary Green */
+      animation-delay: 0.9s;
+    }
+    
+    @keyframes loader-ring {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .loader-text {
+      margin-top: 20px;
+      font-family: Arial, sans-serif;
+      font-size: 16px;
+      color: #333333;
+      text-align: center;
+    }
+    
+    .content {
+      display: none; /* Hidden until loaded */
+    }
+
+    .flashes {
+      list-style-type: none;
+      padding: 0;
+      margin: 0 0 20px 0;
+    }
+
+    .flash {
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 4px;
+    }
+
+    .flash.error {
+      background-color: #ffecec;
+      color: #f44336;
+    }
+
+    .flash.success {
+      background-color: #e8f5e9;
+      color: #4caf50;
+    }
+
+    .flash.info {
+      background-color: #e3f2fd;
+      color: #2196f3;
+    }
+  </style>
+</head>
+<body>
+  <!-- Preloader -->  
+  <div class="preloader" id="preloader">
+    <div class="loader">
+      <div class="loader-ring"></div>
+      <div class="loader-ring"></div>
+      <div class="loader-ring"></div>
+      <div class="loader-ring"></div>
+    </div>
+    <div class="loader-text">Logging you in...</div>
+  </div>
+  
+  <!-- Content -->  
+  <div class="content" id="content">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul class="flashes">
+          {% for category, message in messages %}
+            <li class="flash {{ category }}">{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+    
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Simple logging function
+      function logEvent(msg) {
+        console.log(`[AUTH] ${msg}`);
+      }
+
+      // Get absolute URL for all redirects
+      const siteUrl = window.location.origin;
+      logEvent(`Site URL: ${siteUrl}`);
+      
+      // Extract token from URL hash
+      const hash = window.location.hash.substr(1);
+      logEvent(`URL hash: ${hash}`);
+      
+      const params = new URLSearchParams(hash);
+      const accessToken = params.get('access_token');
+      logEvent(`Access token present: ${accessToken ? 'YES' : 'NO'}`);
+      
+      if (!accessToken) {
+        // No token found
+        document.getElementById('preloader').style.display = 'none';
+        document.getElementById('content').style.display = 'block';
+        logEvent('ERROR: No access token found in URL hash');
+        alert('Login failed: No access token found.');
+        window.location.href = `${siteUrl}/login`;
+        return;
+      }
+      
+      // We have a token, let's process it
+      logEvent('Token found, sending to backend...');
+      
+      fetch(`${siteUrl}/callback/google`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ access_token: accessToken, mode: 'login' }),
+        credentials: 'same-origin'
+      })
+      .then(response => {
+        logEvent(`Backend response status: ${response.status}`);
+        logEvent(`Redirected: ${response.redirected}`);
+        
+        // Hide preloader
+        document.getElementById('preloader').style.display = 'none';
+        document.getElementById('content').style.display = 'block';
+        
+        if (response.redirected) {
+          logEvent(`Redirecting to: ${response.url}`);
+          window.location.href = response.url;
+        } else if (response.ok) {
+          logEvent('Login successful, redirecting to home');
+          window.location.href = `${siteUrl}/`;
+        } else {
+          return response.text().then(errorText => {
+            logEvent(`Login error: ${errorText}`);
+            alert(`Login failed: ${errorText}`);
+            window.location.href = `${siteUrl}/login`;
+          });
+        }
+      })
+      .catch(error => {
+        document.getElementById('preloader').style.display = 'none';
+        document.getElementById('content').style.display = 'block';
+        
+        logEvent(`Fetch error: ${error.message}`);
+        console.error('Login error:', error);
+        alert(`Login failed: ${error.message}`);
+        window.location.href = `${siteUrl}/login`;
+      });
+    });
+  </script>
+</body>
+</html>
