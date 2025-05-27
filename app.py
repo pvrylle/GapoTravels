@@ -375,9 +375,18 @@ supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 @app.route('/login/google')
 def login_google():
     try:
+        # Use request.host_url to get the current host instead of FRONTEND_URL
+        # This ensures it works both locally and in production
+        current_host = request.host_url.rstrip('/')
+        
+        # Use FRONTEND_URL as fallback if request.host_url is not available
+        redirect_base = current_host or FRONTEND_URL
+        
+        logger.info(f"Starting Google login with redirect to {redirect_base}/auth-callback/login")
+        
         redirect_url = (
             f"{SUPABASE_URL}/auth/v1/authorize?"
-            f"provider=google&redirect_to={FRONTEND_URL}/auth-callback/login"
+            f"provider=google&redirect_to={redirect_base}/auth-callback/login"
         )
         return redirect(redirect_url)
     except Exception as e:
