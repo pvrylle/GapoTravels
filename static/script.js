@@ -175,13 +175,24 @@ star.addEventListener('click', () => {
 let allReviews = [];
 let currentBatchIndex = 0;
 let rotationInterval;
-const reviewsPerBatch = 8;
+let reviewsPerBatch = window.innerWidth <= 768 ? 2 : 8;
+window.addEventListener('resize', () => {
+    reviewsPerBatch = window.innerWidth <= 768 ? 2 : 8;
+});
 
 // Function to fetch and display reviews
 function fetchReviews() {
+    // Show loader before fetching
+    const loader = document.getElementById('reviews-loader');
+    if (loader) loader.style.display = 'block';
+    const reviewsContainer = document.getElementById('reviews-container');
+    if (reviewsContainer) reviewsContainer.innerHTML = '';
+
     fetch('/get_reviews')
         .then(response => response.json())
         .then(reviews => {
+            // Hide loader after fetching
+            if (loader) loader.style.display = 'none';
             allReviews = reviews;
             const reviewsContainer = document.getElementById('reviews-container');
             
@@ -212,6 +223,7 @@ function fetchReviews() {
             }
         })
         .catch(error => {
+            if (loader) loader.style.display = 'none';
             console.error('Error fetching reviews:', error);
             document.getElementById('reviews-container').innerHTML = 
                 '<p class="text-danger">Error loading reviews. Please try again later.</p>';

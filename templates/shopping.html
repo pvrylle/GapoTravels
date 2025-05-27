@@ -63,11 +63,17 @@
                        class="btn btn-primary">
                         <i class="fas fa-map-marked-alt"></i> View on Map
                     </a>
-                    <button type="button" 
-                            class="btn btn-outline-primary" 
-                            onclick="showReviewModal('{{ place.name }}')">
-                        <i class="fas fa-star"></i> Add Review
-                    </button>
+                    {% if current_user.is_authenticated %}
+                        <button type="button" 
+                                class="btn btn-outline-primary" 
+                                onclick="showReviewModal('{{ place.name }}')">
+                            <i class="fas fa-star"></i> Add Review
+                        </button>
+                        {% else %}
+                        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#loginModal">
+                            <i class="fas fa-star"></i> Add Review
+                        </button>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -129,4 +135,53 @@
         </div>
     </div>
 </div>
+
+<!-- Login Modal for Sign In Prompt - Compact Version -->
+<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm" style="max-width: 300px; margin: auto;">
+        <div class="modal-content" style="border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.15);">
+            <div class="modal-header border-0 p-2" style="justify-content: flex-end;">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center pt-0 pb-4 px-3">
+                <div class="auth-icon-container mb-3" style="background: linear-gradient(135deg, #008FFF, #28C997); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                    <i class="fas fa-pen-nib auth-icon-sm" style="color: white; font-size: 1.2rem;"></i>
+                </div>
+                <h5 class="fw-bold mb-1" style="font-size: 1.1rem;">Share your thoughts</h5>
+                <p class="text-muted small mb-3" style="font-size: 0.85rem;">Help others discover the best of Olongapo</p>
+                <div class="d-grid gap-2 col-10 mx-auto">
+                    <a href="{{ url_for('login') }}" class="btn btn-primary btn-rounded d-flex align-items-center justify-content-center" style="border-radius: 20px; padding: 8px 16px; font-size: 0.9rem;">
+                        <i class="fas fa-sign-in-alt me-2"></i><span>Sign In</span>
+                    </a>
+                    <div class="login-divider" style="margin: 10px 0; position: relative; text-align: center;">
+                        <span style="background-color: white; padding: 0 10px; position: relative; z-index: 1; font-size: 0.8rem; color: #777;">or</span>
+                        <hr style="margin-top: -9px; border-top: 1px solid #e0e0e0;">
+                    </div>
+                    <a href="{{ url_for('signup') }}" class="btn btn-outline-primary btn-rounded d-flex align-items-center justify-content-center" style="border-radius: 20px; padding: 8px 16px; font-size: 0.9rem;">
+                        <i class="fas fa-user-plus me-2"></i><span>Join Now</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var currentUserId = "{{ current_user.id if current_user.is_authenticated else '' }}";
+    
+    // Handle custom destination field in review modal
+    document.addEventListener('DOMContentLoaded', function() {
+        const destinationSelect = document.getElementById('destinationSelect');
+        const customDestinationContainer = document.getElementById('customDestinationContainer');
+        
+        if (destinationSelect && customDestinationContainer) {
+            destinationSelect.addEventListener('change', function() {
+                if (this.value === 'custom') {
+                    customDestinationContainer.style.display = 'block';
+                } else {
+                    customDestinationContainer.style.display = 'none';
+                }
+            });
+        }
+    });
+</script>
 {% endblock %} 

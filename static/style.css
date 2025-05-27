@@ -1680,27 +1680,7 @@ html {
     opacity: 1;
 }
 
-.carousel-indicators {
-    position: relative;
-    margin-top: 2rem;
-    margin-bottom: 0;
-}
 
-.carousel-indicators [data-bs-target] {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background-color: var(--primary-color); /* Replace hardcoded green with primary color variable */
-    opacity: 0.5;
-    margin: 0 5px;
-    transition: all 0.3s ease;
-}
-
-.carousel-indicators .active {
-    background-color: var(--primary-color); /* Replace hardcoded green with primary color variable */
-    opacity: 1;
-    transform: scale(1.2);
-}
 
 @media (max-width: 768px) {
     .section-header {
@@ -2811,55 +2791,160 @@ html {
 }
 
 /* Carousel Controls Styling */
-.carousel-control-prev, 
-.carousel-control-next {
-    background-color: var(--primary-color);
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    top: 50%;
-    transform: translateY(-50%);
-    margin: 0 15px;
-    opacity: 0.9;
+.carousel .card {
+    background: var(--card-bg); /* Replace hardcoded white with card background variable */
+    border-radius: 15px; /* Specific border-radius for carousel cards */
+    box-shadow: var(--card-shadow); /* Specific shadow for carousel cards */
+    transition: all 0.3s ease;
+    height: 100%;
+    margin: 0rem 0.2rem;
 }
 
-.carousel-control-prev:hover, 
+.carousel .card:hover {
+    transform: translateY(-10px); /* Specific larger hover effect for carousel cards */
+    box-shadow: 0 12px 30px var(--blue-transparent); /* Specific shadow color for carousel cards */
+}
+
+.carousel .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--primary-color); /* Replace hardcoded sage color with primary color variable */
+    z-index: 1;
+}
+
+.carousel .card-img-top {
+    height: 240px;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.carousel .card:hover .card-img-top {
+    transform: scale(1.05);
+}
+
+.carousel .card-body {
+    padding: 1.8rem;
+    text-align: center;
+}
+
+.carousel .card-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--primary-color); /* Replace hardcoded green with primary color variable */
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.carousel .card-title i {
+    color: var(--text-secondary); /* Replace hardcoded gray with text secondary variable */
+    font-size: 1.2rem;
+}
+
+.carousel .card-text {
+    color: var(--text-primary); /* Replace hardcoded gray with text primary variable */
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+.carousel .btn-primary {
+    padding: 0.8rem 1.5rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.carousel .btn-primary:hover {
+    background: var(--dark-blue); /* Replace hardcoded darker green with dark blue variable */
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px var(--blue-transparent); /* Replace hardcoded shadow with blue-transparent variable */
+}
+
+.carousel .btn-primary i {
+    margin-right: 0.5rem;
+}
+
+/* Carousel Controls */
+.carousel-control-prev,
+.carousel-control-next {
+    width: 50px;
+    height: 50px;
+    background: var(--primary-color); /* Replace hardcoded green with primary color variable */
+    border-radius: 50%;
+    opacity: 0.9;
+    top: 50%;
+    transform: translateY(-50%);
+    margin: 0 1rem;
+}
+
+.carousel-control-prev:hover,
 .carousel-control-next:hover {
-    background-color: var(--secondary-color);
+    background: var(--secondary-color); /* Replace hardcoded light green with secondary color variable */
     opacity: 1;
 }
 
-.carousel-control-prev {
-    left: -10px;
-}
-
-.carousel-control-next {
-    right: -10px;
-}
-
-.carousel-control-prev-icon,
-.carousel-control-next-icon {
-    filter: none;
-}
-
 .carousel-indicators {
-    position: static;
-    margin-top: 20px;
+    position: relative;
+    margin-top: 2rem;
     margin-bottom: 0;
 }
 
 .carousel-indicators [data-bs-target] {
-    width: 12px;
-    height: 12px;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
-    background-color: var(--subtle-color);
+    background-color: var(--section-color-white); /* probably light */
+    opacity: 2; /* increase opacity from 0.5 */
     margin: 0 5px;
-    border: none;
-    opacity: 1;
+    transition: all 0.3s ease;
+    cursor: pointer;
 }
 
 .carousel-indicators .active {
     background-color: var(--primary-color);
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+@media (max-width: 768px) {
+    .section-header {
+        padding: 2rem 1rem;
+    }
+
+    .section-header h2 {
+        font-size: 2.2rem;
+    }
+
+    /* Hide all cards except the first in each carousel-item */
+  .carousel-item .col-md-4 {
+    display: none; /* Hide all cards */
+  }
+
+  .carousel-item .col-md-4:first-child {
+    display: block; /* Show only first card */
+  }
+
+    .carousel .card {
+        margin: 1rem 0.2rem;
+    }
+
+    .carousel .card-img-top {
+        height: 200px;
+    }
+
+    .carousel-control-prev,
+    .carousel-control-next {
+        width: 40px;
+        height: 40px;
+        margin: 0 0.5rem;
+    }
 }
 
 /* Area Information Section Styles */
@@ -4662,10 +4747,10 @@ body {
   height: 100%;
   border-radius: 50%;
   background: conic-gradient(
-    #ff6b6b 0% 25%, 
-    #70e1a0 25% 50%, 
-    #89d8f0 50% 75%, 
-    #3b82f6 75% 100%
+    #008FFF 0% 25%, 
+    #28C997 25% 50%, 
+    #bf00ff 50% 75%, 
+    #008FFF 75% 100%
   );
   display: flex;
   justify-content: center;
@@ -4981,8 +5066,13 @@ body {
 /* Minimalist Privacy Policy Modal Styles */
 .privacy-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    grid-template-areas: 
+        "collection protection"
+        "rights compliance";
     gap: 1.5rem;
+    min-height: 300px;
 }
 
 .mini-privacy-section {
@@ -5009,6 +5099,13 @@ body {
 @media (max-width: 767px) {
     .privacy-grid {
         grid-template-columns: 1fr;
+        grid-template-rows: repeat(4, auto);
+        grid-template-areas: 
+            "collection"
+            "protection"
+            "rights"
+            "compliance";
+        min-height: auto;
     }
 }
 

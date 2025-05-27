@@ -69,7 +69,7 @@
                         <!-- Beaches -->
                         <div class="col-md-4">
                             <div class="card h-100">
-                                <img src="{{ url_for('static', filename='images/all-hands.jpg') }}" class="card-img-top" alt="Beaches">
+                                <img src="{{ url_for('static', filename='images/all-hands.jpg') }}" class="card-img-top" alt="Beaches" loading="lazy">
                                 <div class="card-body text-center">
                                     <h5 class="card-title"><i class="fas fa-umbrella-beach"></i> Beaches</h5>
                                     <p class="card-text">Discover beaches and coastal destinations.</p>
@@ -83,7 +83,7 @@
                         <!-- Nature -->
                         <div class="col-md-4">
                             <div class="card h-100">
-                                <img src="{{ url_for('static', filename='images/hidden_gem.jpeg') }}" class="card-img-top" alt="Nature">
+                                <img src="{{ url_for('static', filename='images/hidden_gem.jpeg') }}" class="card-img-top" alt="Nature" loading="lazy">
                                 <div class="card-body text-center">
                                     <h5 class="card-title"><i class="fas fa-tree"></i> Nature</h5>
                                     <p class="card-text">Discover scenic and natural wonders.</p>
@@ -97,7 +97,7 @@
                         <!-- Historical Sites -->
                         <div class="col-md-4">
                             <div class="card h-100">
-                                <img src="{{ url_for('static', filename='images/ulo_ng_apo.jpg') }}" class="card-img-top" alt="Historical Sites">
+                                <img src="{{ url_for('static', filename='images/ulo_ng_apo.jpg') }}" class="card-img-top" alt="Historical Sites" loading="lazy">
                                 <div class="card-body text-center">
                                     <h5 class="card-title"><i class="fas fa-landmark"></i> History</h5>
                                     <p class="card-text">Visit historical landmarks and sites.</p>
@@ -116,7 +116,7 @@
                         <!-- Food & Dining -->
                         <div class="col-md-4">
                             <div class="card h-100">
-                                <img src="{{ url_for('static', filename='images/food_grilled.jpg') }}" class="card-img-top" alt="Food & Dining">
+                                <img src="{{ url_for('static', filename='images/food_grilled.jpg') }}" class="card-img-top" alt="Food & Dining" loading="lazy">
                                 <div class="card-body text-center">
                                     <h5 class="card-title"><i class="fas fa-utensils"></i> Food</h5>
                                     <p class="card-text">Taste local delicacies and dining experiences.</p>
@@ -130,7 +130,7 @@
                         <!-- Shopping -->
                         <div class="col-md-4">
                             <div class="card h-100">
-                                <img src="{{ url_for('static', filename='images/sm_central.jpg') }}" class="card-img-top" alt="Shopping">
+                                <img src="{{ url_for('static', filename='images/sm_central.jpg') }}" class="card-img-top" alt="Shopping" loading="lazy">
                                 <div class="card-body text-center">
                                     <h5 class="card-title"><i class="fas fa-shopping-bag"></i> Shopping</h5>
                                     <p class="card-text">Discover malls, markets, and shopping districts.</p>
@@ -144,7 +144,7 @@
                         <!-- Nightlife -->
                         <div class="col-md-4">
                             <div class="card h-100">
-                                <img src="{{ url_for('static', filename='images/nightlife.jpg') }}" class="card-img-top" alt="Nightlife">
+                                <img src="{{ url_for('static', filename='images/nightlife.jpg') }}" class="card-img-top" alt="Nightlife" loading="lazy">
                                 <div class="card-body text-center">
                                     <h5 class="card-title"><i class="fas fa-moon"></i> Nightlife</h5>
                                     <p class="card-text">Experience entertainment and evening activities.</p>
@@ -159,6 +159,7 @@
             </div>
 
             <!-- Carousel Controls -->
+            <div class="carousel-indicators"></div>
             <button class="carousel-control-prev" type="button" data-bs-target="#destinationCarousel" data-bs-slide="prev">
                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                 <span class="visually-hidden">Previous</span>
@@ -167,17 +168,6 @@
                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
                 <span class="visually-hidden">Next</span>
             </button>
-
-            
-            <!-- Mobile Navigation Buttons -->
-            <div class="mobile-carousel-controls d-md-none text-center mt-3">
-                <button type="button" class="btn btn-carousel" data-bs-target="#destinationCarousel" data-bs-slide="prev">
-                    <i class="fas fa-chevron-left"></i> Previous
-                </button>
-                <button type="button" class="btn btn-carousel" data-bs-target="#destinationCarousel" data-bs-slide="next">
-                    Next <i class="fas fa-chevron-right"></i>
-                </button>
-            </div>
         </div>
     </div>
 </div>
@@ -186,7 +176,11 @@
 <div class="row mt-4" id="reviews">
     <div class="col-12">
         <h2>Reviews</h2>
-        <!-- Display Reviews -->
+        <div id="reviews-loader" style="display:none; text-align:center; margin:2rem 0;">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
         <div id="reviews-container">
             <!-- Reviews will be loaded here dynamically -->
         </div> 
@@ -499,54 +493,240 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchReviews();
 });
 
-// Initialize the carousel with touch support and one-by-one sliding
+// Desktop and Mobile Carousel Functions
 document.addEventListener('DOMContentLoaded', function() {
-    const carouselElement = document.getElementById('destinationCarousel');
-    
-    // Initialize Bootstrap carousel
-    const carousel = new bootstrap.Carousel(carouselElement, {
-        interval: false,  // Don't auto-rotate
-        touch: true      // Enable touch swiping
+  const carouselElement = document.getElementById('destinationCarousel');
+  const carouselInner = carouselElement.querySelector('.carousel-inner');
+
+  // Create or find the indicators container (ul or div)
+  let indicatorsContainer = carouselElement.querySelector('.carousel-indicators');
+  if (!indicatorsContainer) {
+    indicatorsContainer = document.createElement('div');
+    indicatorsContainer.classList.add('carousel-indicators');
+    carouselElement.appendChild(indicatorsContainer);
+  }
+
+  let carousel;
+  let currentIndex = 0;
+
+  if (!carouselElement._originalCards) {
+    carouselElement._originalCards = Array.from(carouselInner.querySelectorAll('.card')).map(card => card.cloneNode(true));
+  }
+
+  function rebuildCarousel() {
+    const allCards = carouselElement._originalCards;
+
+    carouselInner.innerHTML = '';
+    indicatorsContainer.innerHTML = '';
+
+    if (window.innerWidth <= 767.98) {
+      // Mobile: 1 card per slide
+      allCards.forEach((card, idx) => {
+        // Create slide
+        const carouselItem = document.createElement('div');
+        carouselItem.classList.add('carousel-item');
+        if (idx === 0) carouselItem.classList.add('active');
+
+        const colDiv = document.createElement('div');
+        colDiv.classList.add('col-12', 'd-flex', 'justify-content-center');
+        colDiv.appendChild(card.cloneNode(true));
+
+        const rowDiv = document.createElement('div');
+        rowDiv.classList.add('row');
+        rowDiv.appendChild(colDiv);
+
+        carouselItem.appendChild(rowDiv);
+        carouselInner.appendChild(carouselItem);
+
+        // Create indicator dot
+        const indicator = document.createElement('button');
+        indicator.type = 'button';
+        indicator.setAttribute('aria-label', `Slide ${idx + 1}`);
+        if (idx === 0) indicator.classList.add('active');
+        indicator.dataset.bsTarget = '#destinationCarousel';
+        indicator.dataset.bsSlideTo = idx.toString();
+
+        indicatorsContainer.appendChild(indicator);
+      });
+    } else {
+      // Desktop: 3 cards per slide
+      const cardsPerSlide = 3;
+      let slideIndex = 0;
+      for (let i = 0; i < allCards.length; i += cardsPerSlide) {
+        const carouselItem = document.createElement('div');
+        carouselItem.classList.add('carousel-item');
+        if (i === 0) carouselItem.classList.add('active');
+
+        const rowDiv = document.createElement('div');
+        rowDiv.classList.add('row', 'justify-content-center');
+
+        for (let j = i; j < i + cardsPerSlide && j < allCards.length; j++) {
+          const colDiv = document.createElement('div');
+          colDiv.classList.add('col-md-4');
+          colDiv.appendChild(allCards[j].cloneNode(true));
+          rowDiv.appendChild(colDiv);
+        }
+
+        carouselItem.appendChild(rowDiv);
+        carouselInner.appendChild(carouselItem);
+
+        // Create indicator dot for this slide
+        const indicator = document.createElement('button');
+        indicator.type = 'button';
+        indicator.setAttribute('aria-label', `Slide ${slideIndex + 1}`);
+        if (slideIndex === 0) indicator.classList.add('active');
+        indicator.dataset.bsTarget = '#destinationCarousel';
+        indicator.dataset.bsSlideTo = slideIndex.toString();
+
+        indicatorsContainer.appendChild(indicator);
+
+        slideIndex++;
+      }
+    }
+
+    // Dispose and re-create carousel instance
+    if (carousel) carousel.dispose();
+
+    carousel = new bootstrap.Carousel(carouselElement, {
+      interval: false,
+      touch: true
     });
-    
-    // Custom navigation for slide transition
-    let currentIndex = 0;
-    const totalItems = 2; // Only 2 slides now
-    
+
+    currentIndex = 0;
+
+    // Setup indicator click handlers after rebuilding indicators
+    setupIndicatorClicks();
+  }
+
+  // Setup navigation event listeners - attach once on DOMContentLoaded
+  function setupNavigation() {
     document.querySelector('#destinationCarousel .carousel-control-next').addEventListener('click', function(e) {
-        e.preventDefault();
-        currentIndex = (currentIndex + 1) % totalItems;
-        carousel.to(currentIndex);
+      e.preventDefault();
+      carousel.next();
     });
-    
+
     document.querySelector('#destinationCarousel .carousel-control-prev').addEventListener('click', function(e) {
-        e.preventDefault();
-        currentIndex = (currentIndex - 1 + totalItems) % totalItems;
-        carousel.to(currentIndex);
+      e.preventDefault();
+      carousel.prev();
     });
-    
-    // Add swipe gesture support
+
+    // Update currentIndex and indicator active state on slide change
+    carouselElement.addEventListener('slid.bs.carousel', function() {
+      const activeItem = carouselInner.querySelector('.carousel-item.active');
+      const items = Array.from(carouselInner.querySelectorAll('.carousel-item'));
+      currentIndex = items.indexOf(activeItem);
+
+      // Update active indicator
+      updateActiveIndicator(currentIndex);
+    });
+  }
+
+  // Update which indicator button is active
+  function updateActiveIndicator(index) {
+    const indicators = Array.from(indicatorsContainer.children);
+    indicators.forEach((btn, i) => {
+      btn.classList.toggle('active', i === index);
+    });
+  }
+
+  // Setup click on indicator dots to jump to slide
+  function setupIndicatorClicks() {
+    const indicators = Array.from(indicatorsContainer.children);
+    indicators.forEach((btn, idx) => {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        carousel.to(idx);
+      });
+    });
+  }
+
+  // Swipe support with jitter fix for mobile (touch)
+  function setupSwipe() {
     let touchStartX = 0;
     let touchEndX = 0;
-    
+    let isSliding = false;
+    const swipeThreshold = 40;
+
     carouselElement.addEventListener('touchstart', function(e) {
-        touchStartX = e.changedTouches[0].screenX;
+      touchStartX = e.changedTouches[0].screenX;
+      touchEndX = touchStartX;
     });
-    
+
+    carouselElement.addEventListener('touchmove', function(e) {
+      touchEndX = e.changedTouches[0].screenX;
+    });
+
     carouselElement.addEventListener('touchend', function(e) {
-        touchEndX = e.changedTouches[0].screenX;
-        handleSwipe();
+      if (isSliding) return;
+
+      const distance = touchEndX - touchStartX;
+      if (Math.abs(distance) < swipeThreshold) return;
+
+      isSliding = true;
+
+      if (distance < 0) {
+        document.querySelector('#destinationCarousel .carousel-control-next').click();
+      } else {
+        document.querySelector('#destinationCarousel .carousel-control-prev').click();
+      }
+
+      setTimeout(() => {
+        isSliding = false;
+      }, 700);
     });
-    
-    function handleSwipe() {
-        if (touchEndX < touchStartX) {
-            // Swipe left - next slide
-            document.querySelector('#destinationCarousel .carousel-control-next').click();
-        } else if (touchEndX > touchStartX) {
-            // Swipe right - previous slide
-            document.querySelector('#destinationCarousel .carousel-control-prev').click();
-        }
-    }
+  }
+
+  // Swipe support for desktop (mouse drag)
+  function setupDesktopSwipe() {
+    let mouseDownX = 0;
+    let mouseCurrentX = 0;
+    let isDragging = false;
+    const swipeThreshold = 40;
+
+    carouselElement.addEventListener('mousedown', function(e) {
+      mouseDownX = e.screenX;
+      mouseCurrentX = mouseDownX;
+      isDragging = true;
+    });
+
+    carouselElement.addEventListener('mousemove', function(e) {
+      if (!isDragging) return;
+      mouseCurrentX = e.screenX;
+    });
+
+    carouselElement.addEventListener('mouseup', function(e) {
+      if (!isDragging) return;
+      isDragging = false;
+
+      const distance = mouseCurrentX - mouseDownX;
+      if (Math.abs(distance) < swipeThreshold) return;
+
+      if (distance < 0) {
+        document.querySelector('#destinationCarousel .carousel-control-next').click();
+      } else {
+        document.querySelector('#destinationCarousel .carousel-control-prev').click();
+      }
+    });
+
+    // Cancel drag if mouse leaves carousel element
+    carouselElement.addEventListener('mouseleave', function(e) {
+      isDragging = false;
+    });
+  }
+
+  // Initial setup
+  rebuildCarousel();
+  setupNavigation();
+  setupSwipe();
+  setupDesktopSwipe();
+
+  let resizeTimeout;
+  window.addEventListener('resize', function() {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+      rebuildCarousel();
+    }, 250);
+  });
 });
 
 // Hero search functionality

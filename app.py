@@ -186,7 +186,7 @@ def check_supabase_connection():
     """Check Supabase connection before each request"""
     if request.endpoint and 'static' not in request.endpoint:
         if not supabase or not service_supabase:
-            flash('Database service is unavailable.')
+            flash('Database service is unavailable.', 'danger')
             return render_template('500.html'), 500
 
 def test_supabase_connection():
@@ -674,7 +674,6 @@ def get_reviews():
         response = service_supabase.table('reviews')\
             .select('*')\
             .order('created_at', desc=True)\
-            .limit(10)\
             .execute()
 
         reviews = response.data if response.data else []
@@ -726,7 +725,7 @@ def delete_review(review_id):
         review = service_supabase.table('reviews').select('*').eq('id', review_id).single().execute()
 
         if not review.data:
-            flash('Review not found.')
+            flash('Review not found.', 'danger')
             return redirect(url_for('index'))
 
         if review.data['user_id'] != current_user.id:
@@ -739,11 +738,11 @@ def delete_review(review_id):
         if result.data:
             flash('Review deleted successfully!', 'success')
         else:
-            flash('Error deleting review.')
+            flash('Error deleting review.', 'danger')
 
     except Exception as e:
         logger.error(f'Error deleting review: {str(e)}')
-        flash('Error deleting review.')
+        flash('Error deleting review.', 'danger')
 
     return redirect(url_for('index'))
 

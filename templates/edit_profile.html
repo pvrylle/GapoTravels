@@ -60,8 +60,6 @@
     .google-badge i {
         margin-right: 4px;
     }
-    
-    /* Password validation styles moved to style.css */
 </style>
 {% endblock %}
 
@@ -240,15 +238,15 @@
         // Create validation message containers
         const newPasswordValidation = document.createElement('div');
         newPasswordValidation.className = 'password-validation';
-        newPasswordField.parentNode.appendChild(newPasswordValidation);
+        newPasswordField.parentNode.insertBefore(newPasswordValidation, newPasswordField.nextSibling.nextSibling);
         
         const confirmPasswordValidation = document.createElement('div');
         confirmPasswordValidation.className = 'password-validation';
-        confirmPasswordField.parentNode.appendChild(confirmPasswordValidation);
+        confirmPasswordField.parentNode.insertBefore(confirmPasswordValidation, confirmPasswordField.nextSibling);
         
         const currentPasswordValidation = document.createElement('div');
         currentPasswordValidation.className = 'password-validation';
-        currentPasswordField.parentNode.appendChild(currentPasswordValidation);
+        currentPasswordField.parentNode.insertBefore(currentPasswordValidation, currentPasswordField.nextSibling.nextSibling);
         
         // Password requirements
         const requirements = [
@@ -286,8 +284,6 @@
             }
             
             newPasswordValidation.style.display = 'block';
-            // Position the validation box correctly
-            positionValidationBox(newPasswordField, newPasswordValidation);
             let valid = true;
             
             // Check each requirement
@@ -305,12 +301,9 @@
         // Check if passwords match
         function validateConfirmPassword() {
             if (!confirmPasswordField.value || !newPasswordField.value) {
-                confirmPasswordValidation.style.display = 'none';
+                confirmPasswordValidation.innerHTML = '';
                 return false;
             }
-            
-            confirmPasswordValidation.style.display = 'block';
-            positionValidationBox(confirmPasswordField, confirmPasswordValidation);
             
             if (confirmPasswordField.value === newPasswordField.value) {
                 confirmPasswordValidation.innerHTML = '<p class="requirement valid"><i class="fas fa-check-circle"></i> Passwords match</p>';
@@ -321,13 +314,6 @@
             }
         }
         
-        // Function to position validation box
-        function positionValidationBox(inputField, validationBox) {
-            // Position based on input field
-            const rect = inputField.getBoundingClientRect();
-            validationBox.style.top = `${inputField.offsetHeight}px`;
-        }
-        
         // Add event listeners
         newPasswordField.addEventListener('input', function() {
             validateNewPassword();
@@ -335,52 +321,9 @@
             validateConfirmPassword();
         });
         
-        // Add focus/blur events to show/hide validation
-        newPasswordField.addEventListener('focus', function() {
-            if (this.value) {
-                validateNewPassword();
-            }
-        });
-        
-        newPasswordField.addEventListener('blur', function() {
-            // Keep validation visible if there are errors and the field has a value
-            if (!validateNewPassword() && this.value) {
-                newPasswordValidation.style.display = 'block';
-            } else {
-                newPasswordValidation.style.display = 'none';
-            }
-        });
-        
         confirmPasswordField.addEventListener('input', validateConfirmPassword);
         
-        confirmPasswordField.addEventListener('focus', function() {
-            if (this.value && newPasswordField.value) {
-                validateConfirmPassword();
-            }
-        });
-        
-        confirmPasswordField.addEventListener('blur', function() {
-            // Hide validation on blur
-            setTimeout(() => {
-                confirmPasswordValidation.style.display = 'none';
-            }, 200);
-        });
-        
         currentPasswordField.addEventListener('input', validateCurrentPassword);
-        
-        currentPasswordField.addEventListener('focus', function() {
-            if (newPasswordField.value && !this.value) {
-                validateCurrentPassword();
-                currentPasswordValidation.style.display = 'block';
-                positionValidationBox(currentPasswordField, currentPasswordValidation);
-            }
-        });
-        
-        currentPasswordField.addEventListener('blur', function() {
-            setTimeout(() => {
-                currentPasswordValidation.style.display = 'none';
-            }, 200);
-        });
         
         // Form submission validation
         document.querySelector('form').addEventListener('submit', function(e) {
