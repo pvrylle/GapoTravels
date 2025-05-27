@@ -36,7 +36,17 @@ load_dotenv()
 
 # ===== ENV VARIABLES - START =====
 
-FRONTEND_URL = os.getenv("FRONTEND_URL", "http://127.0.0.1:5000")
+# Check if we're on render.com
+IS_PRODUCTION = os.environ.get('RENDER') is not None
+
+# Set proper URL based on environment
+if IS_PRODUCTION:
+    FRONTEND_URL = "https://gapotravels.onrender.com"
+    logger.info("Running in production mode on render.com")
+else:
+    FRONTEND_URL = os.getenv("FRONTEND_URL", "http://127.0.0.1:5000")
+    logger.info(f"Running in development mode with URL: {FRONTEND_URL}")
+
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
@@ -375,19 +385,22 @@ supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 @app.route('/login/google')
 def login_google():
     try:
-        # Use request.host_url to get the current host instead of FRONTEND_URL
-        # This ensures it works both locally and in production
-        current_host = request.host_url.rstrip('/')
+        # Get the site URL for the redirect_to parameter
+        if os.environ.get('RENDER') or 'render.com' in request.host:
+            site_url = 'https://gapotravels.onrender.com'
+            logger.info(f"Using production URL for site: {site_url}")
+        else:
+            site_url = FRONTEND_URL
+            logger.info(f"Using development URL for site: {site_url}")
         
-        # Use FRONTEND_URL as fallback if request.host_url is not available
-        redirect_base = current_host or FRONTEND_URL
-        
-        logger.info(f"Starting Google login with redirect to {redirect_base}/auth-callback/login")
-        
+        # Use the correct Supabase OAuth URL format
         redirect_url = (
             f"{SUPABASE_URL}/auth/v1/authorize?"
-            f"provider=google&redirect_to={redirect_base}/auth-callback/login"
+            f"provider=google"
+            f"&redirect_to={site_url}/auth-callback/login"
         )
+        
+        logger.info(f"Google login redirect URL: {redirect_url}")
         return redirect(redirect_url)
     except Exception as e:
         logger.error(f"Google login redirection failed: {str(e)}")
@@ -396,7 +409,20 @@ def login_google():
 
 @app.route('/auth-callback/login')
 def auth_callback_login():
-    return render_template('auth_callback_login.html')
+    # Log information about the request to help with debugging
+    logger.info(f"Auth callback received - Host: {request.host}, URL: {request.url}")
+    logger.info(f"Request headers: {dict(request.headers)}")
+    
+    # Add debug info to be passed to the template
+    debug_info = {
+        'host': request.host,
+        'url': request.url,
+        'frontend_url': FRONTEND_URL,
+        'is_production': IS_PRODUCTION,
+        'render_env': os.environ.get('RENDER', 'Not set')
+    }
+    
+    return render_template('auth_callback_login.html', debug_info=debug_info)
 
 @app.route('/callback/google', methods=['POST'])
 def google_callback():
