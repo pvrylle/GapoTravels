@@ -130,60 +130,74 @@
   </div>
 
   <script>
-    // Process login when the page loads
-    window.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function() {
+      // Simple logging function
+      function logEvent(msg) {
+        console.log(`[AUTH] ${msg}`);
+      }
+
+      // Get absolute URL for all redirects
+      const siteUrl = window.location.origin;
+      logEvent(`Site URL: ${siteUrl}`);
+      
+      // Extract token from URL hash
       const hash = window.location.hash.substr(1);
+      logEvent(`URL hash: ${hash}`);
+      
       const params = new URLSearchParams(hash);
       const accessToken = params.get('access_token');
+      logEvent(`Access token present: ${accessToken ? 'YES' : 'NO'}`);
       
-      // Get base URL from current location
-      const baseUrl = window.location.origin;
-      console.log('Current base URL:', baseUrl);
-      
-      // Debug info
-      console.log('Hash:', hash);
-      console.log('Access token:', accessToken ? 'Present' : 'Missing');
-
       if (!accessToken) {
-        // Hide preloader and show error
+        // No token found
         document.getElementById('preloader').style.display = 'none';
         document.getElementById('content').style.display = 'block';
+        logEvent('ERROR: No access token found in URL hash');
         alert('Login failed: No access token found.');
-        window.location.href = baseUrl + '/login';
-      } else {
-        // Use absolute URL for the callback
-        fetch(baseUrl + '/callback/google', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ access_token: accessToken, mode: 'login' }),
-        })
-        .then(res => {
-          // Hide preloader when response is received
-          document.getElementById('preloader').style.display = 'none';
-          document.getElementById('content').style.display = 'block';
-          console.log('Response status:', res.status);
-          console.log('Redirected:', res.redirected);
-          
-          if (res.redirected) {
-            window.location.href = res.url;
-          } else {
-            return res.text().then(text => {
-              console.error('Login error:', text);
-              alert("Login failed: " + text);
-              window.location.href = baseUrl + '/login';
-            });
-          }
-        })
-        .catch((error) => {
-          // Hide preloader on error
-          document.getElementById('preloader').style.display = 'none';
-          document.getElementById('content').style.display = 'block';
-          
-          console.error('Fetch error:', error);
-          alert('Login failed: Could not communicate with the server.');
-          window.location.href = baseUrl + '/login';
-        });
+        window.location.href = `${siteUrl}/login`;
+        return;
       }
+      
+      // We have a token, let's process it
+      logEvent('Token found, sending to backend...');
+      
+      fetch(`${siteUrl}/callback/google`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ access_token: accessToken, mode: 'login' }),
+        credentials: 'same-origin'
+      })
+      .then(response => {
+        logEvent(`Backend response status: ${response.status}`);
+        logEvent(`Redirected: ${response.redirected}`);
+        
+        // Hide preloader
+        document.getElementById('preloader').style.display = 'none';
+        document.getElementById('content').style.display = 'block';
+        
+        if (response.redirected) {
+          logEvent(`Redirecting to: ${response.url}`);
+          window.location.href = response.url;
+        } else if (response.ok) {
+          logEvent('Login successful, redirecting to home');
+          window.location.href = `${siteUrl}/`;
+        } else {
+          return response.text().then(errorText => {
+            logEvent(`Login error: ${errorText}`);
+            alert(`Login failed: ${errorText}`);
+            window.location.href = `${siteUrl}/login`;
+          });
+        }
+      })
+      .catch(error => {
+        document.getElementById('preloader').style.display = 'none';
+        document.getElementById('content').style.display = 'block';
+        
+        logEvent(`Fetch error: ${error.message}`);
+        console.error('Login error:', error);
+        alert(`Login failed: ${error.message}`);
+        window.location.href = `${siteUrl}/login`;
+      });
     });
   </script>
 </body>
