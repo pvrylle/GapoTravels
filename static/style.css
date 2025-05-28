@@ -797,6 +797,18 @@ html {
     box-shadow: var(--card-shadow);
 }
 
+/* Mobile-first responsiveness */
+@media (max-width: 768px) {
+    #map {
+        height: 80vh; /* Slightly shorter for mobile UI */
+        animation: resizeMap 0.4s ease-in-out;
+    }
+
+    .leaflet-popup-content-wrapper {
+        max-width: 250px;
+        font-size: 0.9rem;
+    }
+}
 /* Map and Location Styles */
 .popup-content {
     padding: 10px;

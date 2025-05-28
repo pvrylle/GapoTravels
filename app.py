@@ -236,10 +236,6 @@ def index():
                 # Set flag to False so it won't flash again
                 service_supabase.table('users').update({'new_google_user': False}).eq('id', user_data['id']).execute()
 
-            # Flash for every Google login
-            elif user_record.get('provider') == 'google':
-                flash(f"Successfully logged in {user_data.get('first_name', 'User')} via Google!", "success")
-
             # Update session with fresh data
             session['user'] = user_data
 
@@ -290,35 +286,36 @@ def signup():
 
         # If all fields are filled but privacy policy not accepted
         if not privacy_agreement:
-            flash('You must accept the Privacy Policy to proceed.', 'warning')
+            flash('Privacy Policy acceptance required.', 'warning')
             return render_template('signup.html', first_name=first_name, last_name=last_name, email=email)
 
         # Password validations (same approach)
         if len(password) < 8:
-            flash('Password too short we require 8 characters.', 'warning')
+            
+            flash('Password too short (min 8 chars).', 'warning')
             return render_template('signup.html', first_name=first_name, last_name=last_name, email=email)
 
         if not any(c.isupper() for c in password):
-            flash('Add at least 1 uppercase letter.', 'warning')
+            flash('Need 1 uppercase letter.', 'warning')
             return render_template('signup.html', first_name=first_name, last_name=last_name, email=email)
 
         if not any(c.islower() for c in password):
-            flash('Add at least 1 lowercase letter.', 'warning')
+            flash('Need 1 lowercase letter.', 'warning')
             return render_template('signup.html', first_name=first_name, last_name=last_name, email=email)
 
         if not any(c.isdigit() for c in password):
-            flash('Add at least 1 number.', 'warning')
+            flash('Need 1 number.', 'warning')
             return render_template('signup.html', first_name=first_name, last_name=last_name, email=email)
 
         if not any(c in "!@#$%^&*()-_=+[{]}\\|;:'\",<.>/?`~" for c in password):
-            flash('Add at least 1 special character.', 'warning')
+            flash('Need 1 special character.', 'warning')
             return render_template('signup.html', first_name=first_name, last_name=last_name, email=email)
 
         try:
             logger.info("Checking if email exists...")
             existing_email = service_supabase.table('users').select('*').eq('email', email).execute()
             if existing_email.data and len(existing_email.data) > 0:
-                flash('This email address is already registered.', 'danger')
+                flash('Email already registered.', 'danger')
                 return render_template('signup.html', first_name=first_name, last_name=last_name, email=email)
 
             # Handle profile picture upload
@@ -365,12 +362,12 @@ def signup():
             verify_link = url_for('verify_email', token=token, _external=True)
             send_verification_email(email, verify_link)
 
-            flash('Please check your email to verify your account.', 'success')
+            flash('Please check your email.', 'success')
             return redirect(url_for('login'))
 
         except Exception as e:
             logger.error(f'Error during signup: {str(e)}')
-            flash('Unable to create your account at this time. Please try again later.', 'danger')
+            flash('Please try again later.', 'danger')
             return render_template('signup.html', first_name=first_name, last_name=last_name, email=email)
 
     # GET request - empty form
@@ -844,7 +841,7 @@ def edit_profile():
             if new_password:
                 # Verify current password is provided and correct
                 if not current_password:
-                    flash('Current password is required to change password.', 'warning')
+                    flash('Current password is required.', 'warning')
                     return redirect(url_for('edit_profile'))
 
                 # Get the current user's password hash from the database
@@ -867,19 +864,19 @@ def edit_profile():
                     return redirect(url_for('edit_profile'))
 
                 if not any(c.isupper() for c in new_password):
-                    flash('Add at least 1 uppercase letter.', 'warning')
+                    flash('Need 1 uppercase letter.', 'warning')
                     return redirect(url_for('edit_profile'))
 
                 if not any(c.islower() for c in new_password):
-                    flash('Add at least 1 lowercase letter.', 'warning')
+                    flash('Need 1 lowercase letter.', 'warning')
                     return redirect(url_for('edit_profile'))
 
                 if not any(c.isdigit() for c in new_password):
-                    flash('Add at least 1 number.', 'warning')
+                    flash('Need 1 number.', 'warning')
                     return redirect(url_for('edit_profile'))
 
                 if not any(c in "!@#$%^&*()-_=+[{]}\\|;:'\",<.>/?`~" for c in new_password):
-                    flash('Add at least 1 special character.', 'warning')
+                    flash('Need 1 special character.', 'warning')
                     return redirect(url_for('edit_profile'))
 
                 try:
@@ -931,49 +928,57 @@ def settings():
         try:
             if action == 'delete_account':
                 user_id = current_user.id
-
-                # Step 1: Find provider_id from google_users for current user
-                google_user_result = service_supabase.table('google_users').select('provider_id').eq('user_id', user_id).execute()
-
-                if google_user_result.data:
-                    provider_id = google_user_result.data[0]['provider_id']
-
-                    # Step 2: Find all auth users in your 'users' table with the same provider_id
-                    auth_users_result = service_supabase.table('users').select('id').eq('provider_id', provider_id).execute()
-
-                    if auth_users_result.data:
-                        for auth_user in auth_users_result.data:
-                            auth_user_id = auth_user['id']
-
-                            # Delete related data linked to this auth_user_id
-                            try:
-                                service_supabase.table('reviews').delete().eq('user_id', auth_user_id).execute()
-                                service_supabase.table('password_resets').delete().eq('user_id', auth_user_id).execute()
-                                service_supabase.table('email_verifications').delete().eq('user_id', auth_user_id).execute()
-                            except Exception as related_error:
-                                logger.error(f"Error deleting related data for user {auth_user_id}: {str(related_error)}")
-                                flash('Error deleting related data. Please contact support.', 'danger')
-                                return redirect(url_for('settings'))
-
-                            # Delete the user record itself
-                            try:
-                                service_supabase.table('users').delete().eq('id', auth_user_id).execute()
-                            except Exception as user_error:
-                                logger.error(f"Error deleting user {auth_user_id}: {str(user_error)}")
-                                flash('Error deleting your account. Please contact support.', 'danger')
-                                return redirect(url_for('settings'))
-
-                    # Step 3: Optionally, delete google_users entry for this provider_id
-                    try:
-                        service_supabase.table('google_users').delete().eq('provider_id', provider_id).execute()
-                    except Exception as google_user_error:
-                        logger.error(f"Error deleting google_user entry: {str(google_user_error)}")
-                        # Not critical, continue
-
-                else:
-                    # If no google_users entry found for current user
-                    flash('No linked Google account found for deletion.', 'warning')
+                
+                # Get current user information
+                user_result = service_supabase.table('users').select('*').eq('id', user_id).execute()
+                
+                if not user_result.data:
+                    flash('User record not found.', 'danger')
                     return redirect(url_for('settings'))
+                
+                user_record = user_result.data[0]
+                is_google_user = user_record.get('provider') == 'google'
+                
+                # First delete all related data for the user
+                try:
+                    # Delete reviews
+                    service_supabase.table('reviews').delete().eq('user_id', user_id).execute()
+                    
+                    # Delete password reset tokens
+                    service_supabase.table('password_resets').delete().eq('user_id', user_id).execute()
+                    
+                    # Delete email verification tokens
+                    service_supabase.table('email_verifications').delete().eq('user_id', user_id).execute()
+                    
+                    # If Google user, clean up google_users data
+                    if is_google_user and user_record.get('provider_id'):
+                        service_supabase.table('google_users').delete().eq('provider_id', user_record.get('provider_id')).execute()
+                        
+                except Exception as related_error:
+                    logger.error(f"Error deleting related data for user {user_id}: {str(related_error)}")
+                    flash('Error removing account data.', 'danger')
+                    return redirect(url_for('settings'))
+                
+                # Now delete the user record itself
+                try:
+                    service_supabase.table('users').delete().eq('id', user_id).execute()
+                except Exception as user_error:
+                    logger.error(f"Error deleting user {user_id}: {str(user_error)}")
+                    flash('Error removing account.', 'danger')
+                    return redirect(url_for('settings'))
+                
+                # For profile pictures, remove from storage if exists
+                if user_record.get('profile_pic'):
+                    try:
+                        # Extract filename from URL
+                        profile_pic_url = user_record.get('profile_pic')
+                        filename = profile_pic_url.split('/')[-1]
+                        
+                        # Delete file from storage
+                        service_supabase.storage.from_('avatars').remove([filename])
+                    except Exception as pic_error:
+                        logger.error(f"Error removing profile picture: {str(pic_error)}")
+                        # Not critical for account deletion, continue
 
                 # Step 4: Logout and clear session
                 session.clear()
@@ -1205,19 +1210,19 @@ def reset_password(token):
                 return render_template('reset_password.html', token=token)
 
             if not any(c.isupper() for c in new_password):
-                flash('Add at least 1 uppercase letter.', 'warning')
+                flash('Need 1 uppercase letter.', 'warning')
                 return render_template('reset_password.html', token=token)
 
             if not any(c.islower() for c in new_password):
-                flash('Add at least 1 lowercase letter.', 'warning')
+                flash('Need 1 lowercase letter.', 'warning')
                 return render_template('reset_password.html', token=token)
 
             if not any(c.isdigit() for c in new_password):
-                flash('Add at least 1 number.', 'warning')
+                flash('Need 1 number.', 'warning')
                 return render_template('reset_password.html', token=token)
 
             if not any(c in "!@#$%^&*()-_=+[{]}\\|;:'\",<.>/?`~" for c in new_password):
-                flash('Add at least 1 special character.', 'warning')
+                flash('Need 1 special character.', 'warning')
                 return render_template('reset_password.html', token=token)
 
             user_id = reset_record['user_id']
@@ -1225,12 +1230,12 @@ def reset_password(token):
             # Check current password
             user_resp = supabase.table('users').select('password_hash').eq('id', user_id).single().execute()
             if not user_resp.data or 'password_hash' not in user_resp.data:
-                flash('User not found or invalid user data.', 'danger')
+                flash('Invalid user data.', 'danger')
                 return render_template('reset_password.html', token=token)
 
             current_hash = user_resp.data['password_hash']
             if check_password_hash(current_hash, new_password):
-                flash('Password cannot be the same as current.', 'warning')
+                flash('Cannot use same password.', 'warning')
                 return render_template('reset_password.html', token=token)
 
             # Update password
@@ -1349,7 +1354,7 @@ def upload_profile_picture(file):
                 result = service_supabase.storage.from_('avatars').upload(
                     unique_filename,
                     buffer.getvalue(),
-                    {'content-type': 'image/jpeg'}  # Always JPEG after compression
+                    {'content-type': 'image/jpeg'}  # Always JPEG after compression 
                 )
                 logger.info(f"Upload result: {result}")
             
