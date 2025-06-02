@@ -68,7 +68,7 @@ A web application that helps users discover and explore destinations in Olongapo
 
 1. Clone the repository
 ```bash
-git clone https://github.com/yourusername/GapoTravels.git
+git clone https://github.com/Ryllepv/GapoTravels.git
 cd GapoTravels
 ```
 
