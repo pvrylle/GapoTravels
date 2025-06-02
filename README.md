@@ -10,6 +10,8 @@ A web application that helps users discover and explore destinations in Olongapo
 
 ### Mobile View
 ![Mobile View](./static/uploads/mobile-view.png)
+
+
 *The responsive mobile interface with optimized navigation and search*
 
 ## Features
