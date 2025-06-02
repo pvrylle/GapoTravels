@@ -2,6 +2,16 @@
 
 A web application that helps users discover and explore destinations in Olongapo City, featuring interactive maps, reviews, and local recommendations.
 
+## UI Preview
+
+### Desktop View
+![Desktop View](./static/uploads/desktop.png)
+*The desktop interface showing the home page with search functionality and navigation menu*
+
+### Mobile View
+![Mobile View](./static/uploads/mobile-view.png)
+*The responsive mobile interface with optimized navigation and search*
+
 ## Features
 
 ### User Authentication & Profiles
@@ -44,7 +54,6 @@ A web application that helps users discover and explore destinations in Olongapo
 - Bootstrap 5.1.3
 - Font Awesome 5.15.4
 - Leaflet.js (Interactive Maps)
-- Lightbox2 (Image Gallery)
 
 ### Backend
 - Python 3.13.1
@@ -148,7 +157,7 @@ The application automatically processes uploaded images:
 5. Open a Pull Request
 
 ## License
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Contact
 - Email: contact@gapotravels.com

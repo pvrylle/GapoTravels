@@ -115,176 +115,191 @@
 
     // Define locations
     const locations = [
-        {
-            name: "SM City Olongapo Central",
-            coords: [14.83603, 120.28301],
-            description: "Major shopping mall with retail stores, dining, and entertainment",
-            type: "shopping",
-            photos: ["/static/images/sm_central.jpg"]
-        },
-        {
-            name: "SM City Olongapo Downtown",
-            coords: [14.8265, 120.2831],
-            description: "Popular mall with shops, dining, and entertainment",
-            type: "shopping",
-            photos: ["/static/images/smcd.jpg"]
-        },
-        {
-            name: "Empire",
-            coords: [14.8292, 120.2813],
-            description: "Trendy nightclub and entertainment spot in Olongapo",
-            type: "nightlife",
-            photos: ["/static/images/empire.jpeg"]
-        },
-        {
-            name: "Harbor Point",
-            coords: [14.8248, 120.2802],
-            description: "Ayala Mall with various shops and restaurants",
-            type: "shopping",
-            photos: ["/static/images/harbor_point.png"]
-        },
-        {
-            name: "Marikit Park",
-            coords: [14.83737, 120.28312],
-            description: "Public park and recreational area",
-            type: "park",
-            photos: ["/static/images/marikit_park.jpg"]
-        },
-        {
-            name: "Olongapo City Public Market",
-            coords: [14.840395, 120.2866710],
-            description: "Traditional market with fresh local produce",
-            type: "market",
-            photos: ["/static/images/public_market.jpg"]
-        },
-        {
-            name: "Rizal Triangle",
-            coords: [14.84148, 120.28696],
-            description: "Historic landmark and meeting point",
-            type: "landmark",
-            photos: ["/static/images/rizal_triangle.jpg"]
-        },
-        {
-            name: "Pamulaklakin Forest Trail",
-            coords: [14.80527, 120.329999],
-            description: "Nature trail with scenic views of the forest",
-            type: "park",
-            photos: ["/static/images/pamulaklakin_forest_trail.jpg"]
-        },
-        {
-            name: "SBMA Waterfront Beach",
-            coords: [14.8219, 120.2717],
-            description: "Tranquil beach with calm waters, ideal for families and picnics",
-            type: "beach",
-            photos: ["/static/images/water_front_beach.jpg"]
-        },
-        {
-            name: "Baloy Long Beach",
-            coords: [14.84863, 120.25250],
-            description: "Popular beach strip with resorts, water activities, and vibrant nightlifes",
-            type: "beach",
-            photos: ["/static/images/baloy_long_beach.jpeg"]
-        },
-        {
-            name: "All Hands Beach",
-            coords: [14.7960, 120.26550],
-            description: "Family-friendly beach with clear waters and white sand",
-            type: "beach",
-            photos: ["/static/images/all_hands_beach.jpg"]
-        },
-        {
-            name: "Blue Rock Beach Resort",
-            coords: [14.84780, 120.25478],
-            description: "Beachfront resort offering top-notch amenities and great views",
-            type: "beach",
-            photos: ["/static/images/blue_rock_resort.jpg"]
-        },
-        {
-            name: "White Rock Beach",
-            coords: [14.8552, 120.24316],
-            description: "Beautiful white sand beach with clear waters",
-            type: "beach",
-            photos: ["/static/images/white_rock_beach.jpg"]
-        },
-        {
-            name: "Grande Island Resort",
-            coords: [14.773008, 120.22914],
-            description: "Island resort with pristine beaches",
-            type: "beach",
-            photos: ["/static/images/grande_island.jpg"]
-        },
-        {
-            name: "SBMA Beach",
-            coords: [14.81975, 120.27625],
-            description: "Scenic beach with stunning views of Subic Bay, perfect for relaxation",
-            type: "beach",
-            photos: ["/static/images/subic_beach.jpg"]
-        },
-        {
-            name: "Pier One Bar",
-            coords: [14.82130, 120.27450],
-            description: "Lively waterfront bar with drinks, music, and sea views",
-            type: "nightlife",
-            photos: ["/static/images/pier_one.jpg"]
-        },
-        {
-            name: "Skybar",
-            coords: [14.82150, 120.27400],
-            description: "Chill rooftop bar offering cocktails and city views",
-            type: "nightlife",
-            photos: ["/static/images/skybar.jpg"]
-        },
-        //new
-        {
-            name: "JEST Camp",
-            coords: [14.7918873, 120.29438],
-            description: "Survival training, bird shows, and jungle fun.",
-            type: "park",
-            photos: ["/static/images/jest_camp.jpg"]
-        },
-        {
-            name: "Zoobic Safari",
-            coords: [14.75083, 120.26689],
-            description: "Tiger safari, exotic animals, and fun for kids.",
-            type: "nature",
-            photos: ["/static/images/zoobic_safari.jpg"]
-        },
-        {
-            name: "Spanish Gate",
-            coords: [14.8175876, 120.283354],
-            description: "Historic gate from the Spanish era naval base.",
-            type: "landmark",
-            photos: ["/static/images/spanish_gate.png"]
-        },
-        {
-            name: "Hellships Memorial",
-            coords: [14.81679361, 120.280858],
-            description: "Honors World War II prisoners of war.",
-            type: "landmark",
-            photos: ["/static/images/hellships_memorial.jpg"]
-        },
-        {
-            name: "Meat Plus",
-            coords: [14.818029 , 120.283654 ],
-            description: "Meat-centric restaurant with a variety of meat dishes.",
-            type: "food",
-            photos: ["/static/images/meat_plus.jpg"]
-        },
-        {
-            name: "Gerry's Grill",
-            coords: [14.81876062 , 120.2781711  ],
-            description: "Filipino restaurant with seafood specialties",
-            type: "food",
-            photos: ["/static/images/gerrys.jpg"]
-        },
-        {
-            name: "Xtremely Xpresso",
-            coords: [14.8193703 , 120.280611],
-            description: "Coffee shop with a variety of coffee and pastries.",
-            type: "food",
-            photos: ["/static/images/xpresso.jpg"]
-        }
-    ];
+    {
+        name: "SM City Olongapo Central",
+        coords: [14.83603, 120.28301],
+        address: "Rizal Avenue Extension, Olongapo City",
+        description: "Major shopping mall with retail stores, dining, and entertainment",
+        type: "shopping",
+        photos: ["/static/images/sm_central.jpg"]
+    },
+    {
+        name: "SM City Olongapo Downtown",
+        coords: [14.8265, 120.2831],
+        address: "Magsaysay Drive, cor Gordon Ave, Olongapo City",
+        description: "Popular mall with shops, dining, and entertainment",
+        type: "shopping",
+        photos: ["/static/images/smcd.jpg"]
+    },
+    {
+        name: "Empire",
+        coords: [14.8292, 120.2813],
+        address: "41 Magsaysay Dr, Olongapo City",
+        description: "Trendy nightclub and entertainment spot in Olongapo",
+        type: "nightlife",
+        photos: ["/static/images/empire.jpeg"]
+    },
+    {
+        name: "Harbor Point",
+        coords: [14.8248, 120.2802],
+        address: "Subic Bay, Rizal Hwy, Subic Bay Freeport Zone",
+        description: "Ayala Mall with various shops and restaurants",
+        type: "shopping",
+        photos: ["/static/images/harbor_point.png"]
+    },
+    {
+        name: "Marikit Park",
+        coords: [14.83737, 120.28312],
+        address: "Hospital Rd, Olongapo City",
+        description: "Public park and recreational area",
+        type: "park",
+        photos: ["/static/images/marikit_park.jpg"]
+    },
+    {
+        name: "Olongapo City Public Market",
+        coords: [14.840395, 120.2866710],
+        address: "2200 Rizal Avenue Extension, Olongapo City",
+        description: "Traditional market with fresh local produce",
+        type: "market",
+        photos: ["/static/images/public_market.jpg"]
+    },
+    {
+        name: "Rizal Triangle",
+        coords: [14.84148, 120.28696],
+        address: "Rizal Avenue Extension, Olongapo City",
+        description: "Historic landmark and meeting point",
+        type: "landmark",
+        photos: ["/static/images/rizal_triangle.jpg"]
+    },
+    {
+        name: "Pamulaklakin Forest Trail",
+        coords: [14.80527, 120.329999],
+        address: "11 Binictican Dr, Subic Bay Freeport Zone",
+        description: "Nature trail with scenic views of the forest",
+        type: "park",
+        photos: ["/static/images/pamulaklakin_forest_trail.jpg"]
+    },
+    {
+        name: "Baloy Long Beach",
+        coords: [14.84863, 120.25250],
+        address: "100 Baloy Long Beach Rd, Olongapo City",
+        description: "Popular beach strip with resorts, water activities, and vibrant nightlifes",
+        type: "beach",
+        photos: ["/static/images/baloy_long_beach.jpeg"]
+    },
+    {
+        name: "All Hands Beach",
+        coords: [14.7960, 120.26550],
+        address: "All Hands Beach, Subic Bay Freeport Zone",
+        description: "Family-friendly beach with clear waters and white sand",
+        type: "beach",
+        photos: ["/static/images/all_hands_beach.jpg"]
+    },
+    {
+        name: "Blue Rock Beach Resort",
+        coords: [14.84780, 120.25478],
+        address: "Baloy Long Beach Rd, Olongapo City",
+        description: "Beachfront resort offering top-notch amenities and great views",
+        type: "beach",
+        photos: ["/static/images/blue_rock_resort.jpg"]
+    },
+    {
+        name: "White Rock Beach",
+        coords: [14.8552, 120.24316],
+        address: "Mojica St, Subic",
+        description: "Beautiful white sand beach with clear waters",
+        type: "beach",
+        photos: ["/static/images/white_rock_beach.jpg"]
+    },
+    {
+        name: "Grande Island Resort",
+        coords: [14.773008, 120.22914],
+        address: "Subic Bay Freeport Zone, Bataan",
+        description: "Island resort with pristine beaches",
+        type: "beach",
+        photos: ["/static/images/grande_island.jpg"]
+    },
+    {
+        name: "SBMA Beach",
+        coords: [14.81975, 120.27625],
+        address: "Subic Bay Freeport Zone",
+        description: "Scenic beach with stunning views of Subic Bay, perfect for relaxation",
+        type: "beach",
+        photos: ["/static/images/subic_beach.jpg"]
+    },
+    {
+        name: "Pier One Bar",
+        coords: [14.82130, 120.27450],
+        address: "Lot 249 Waterfront Rd, Subic Bay Freeport Zone",
+        description: "Lively waterfront bar with drinks, music, and sea views",
+        type: "nightlife",
+        photos: ["/static/images/pier_one.jpg"]
+    },
+    {
+        name: "Skybar",
+        coords: [14.82150, 120.27400],
+        address: "Subic Bay, Blk 2 Lot 3 Waterfront Rd, Subic Bay Freeport Zone",
+        description: "Chill rooftop bar offering cocktails and city views",
+        type: "nightlife",
+        photos: ["/static/images/skybar.jpg"]
+    },
+    {
+        name: "JEST Camp",
+        coords: [14.7918873, 120.29438],
+        address: "Aparri Road, Subic Bay Freeport Zone, Bataan",
+        description: "Survival training, bird shows, and jungle fun.",
+        type: "park",
+        photos: ["/static/images/jest_camp.jpg"]
+    },
+    {
+        name: "Zoobic Safari",
+        coords: [14.75083, 120.26689],
+        address: "Ilanin Forest West, Subic, Bataan",
+        description: "Tiger safari, exotic animals, and fun for kids.",
+        type: "nature",
+        photos: ["/static/images/zoobic_safari.jpg"]
+    },
+    {
+        name: "Spanish Gate",
+        coords: [14.8175876, 120.283354],
+        address: "Sampson Rd, Subic Bay Freeport Zone",
+        description: "Historic gate from the Spanish era naval base.",
+        type: "landmark",
+        photos: ["/static/images/spanish_gate.png"]
+    },
+    {
+        name: "Hellships Memorial",
+        coords: [14.81679361, 120.280858],
+        address: "Waterfront Rd, Olongapo City",
+        description: "Honors World War II prisoners of war.",
+        type: "landmark",
+        photos: ["/static/images/hellships_memorial.jpg"]
+    },
+    {
+        name: "Meat Plus",
+        coords: [14.818029 , 120.283654 ],
+        address: "65 Sampson Rd, Subic Bay Freeport Zone",
+        description: "Meat-centric restaurant with a variety of meat dishes.",
+        type: "food",
+        photos: ["/static/images/meat_plus.jpg"]
+    },
+    {
+        name: "Gerry's Grill",
+        coords: [14.81876062 , 120.2781711  ],
+        address: "Subic, Lot 89-A Waterfront Rd, Olongapo City",
+        description: "Filipino restaurant with seafood specialties",
+        type: "food",
+        photos: ["/static/images/gerrys.jpg"]
+    },
+    {
+        name: "Xtremely Xpresso",
+        coords: [14.8193703 , 120.280611],
+        address: "1 Dewey Avenue, Subic Bay Freeport Zone",
+        description: "Coffee shop with a variety of coffee and pastries.",
+        type: "food",
+        photos: ["/static/images/xpresso.jpg"]
+    }
+];
 
     // Sort locations alphabetically by name
     locations.sort((a, b) => a.name.localeCompare(b.name));
@@ -396,9 +411,8 @@
         return icons[type] || 'map-marker-alt';
     }
 
-    // Create Ppopup pictures
+    // Create popup pictures and location cards
     locations.forEach(location => {
-        // Create marker with enhanced popup
         const marker = L.marker(location.coords, {
             icon: markerIcons[location.type] || L.divIcon({
                 html: '<i class="fas fa-map-marker-alt" style="color: #06B13D;"></i>',
@@ -406,31 +420,30 @@
                 iconSize: [40, 40],
                 iconAnchor: [20, 20]
             })
-        }).bindPopup(`
-                    <div class="popup-content">
-                <h5>${location.name}</h5>
-                <p>${location.description}</p>
-                        ${location.photos ? `
-                            <div class="popup-photos">
-                                ${location.photos.map((photo, index) => `
-                                    <img src="${photo}" 
-                                         alt="${location.name}"
-                                         class="popup-photo"
-                                         onclick="showImagePopup('${photo}', '${location.name}')">
-                                `).join('')}
-                            </div>
-                        ` : ''}
-                    </div>
-                `)
-                .addTo(map);
-            
-        marker.locationData = location; // Store location data with marker
+            }).bindPopup(`
+                <div class="popup-content">
+                    <h5>${location.name}</h5>
+                    <p>${location.description}</p>
+                    ${location.photos ? `
+                        <div class="popup-photos">
+                            ${location.photos.map((photo) => `
+                                <img src="${photo}" 
+                                    alt="${location.name}"
+                                    class="popup-photo"
+                                    onclick="showImagePopup('${photo}', '${location.name}')">
+                            `).join('')}
+                        </div>
+                    ` : ''}
+                    <p class="location-address"><i class="fas fa-map-marker-alt"></i><em> ${location.address} (${location.coords})</em></p>
+                </div>
+            `).addTo(map);
+
+            marker.locationData = location;
             markers[location.name] = marker;
 
-            // Create location card with photo
             const card = document.createElement('div');
             card.className = 'location-card';
-        card.dataset.type = location.type;
+            card.dataset.type = location.type;
             card.innerHTML = `
             <div class="card mb-2 border-0 shadow-sm">
                 <div class="card-body p-3">
@@ -447,24 +460,23 @@
                 </div>
             `;
 
-            // Add click event to center map on location
+
             card.addEventListener('click', () => {
-            // Zoom animation
-            map.flyTo(location.coords, 16, {
-                animate: true,
-                duration: 1
-            });
+                map.flyTo(location.coords, 16, {
+                    animate: true,
+                    duration: 1
+                });
                 marker.openPopup();
-            
-            // Add active class to highlight selected card
-            document.querySelectorAll('.location-card').forEach(c => {
-                c.classList.remove('active');
-            });
-            card.classList.add('active');
+
+                document.querySelectorAll('.location-card').forEach(c => {
+                    c.classList.remove('active');
+                });
+                card.classList.add('active');
             });
 
             locationsList.appendChild(card);
         });
+
 
     // Add search functionality
     const searchInput = document.getElementById('location-search');
@@ -767,6 +779,9 @@
                 <span class="close-popup">&times;</span>
                 <h4>${title}</h4>
                 <img src="${imageUrl}" alt="${title}">
+            </div>
+            </div>
+                <p><em><i class="fas fa-map-marker-alt"></i> ${location.address}<br>${location.coords}</em></p>
             </div>
         `;
 

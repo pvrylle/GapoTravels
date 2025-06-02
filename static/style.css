@@ -2445,16 +2445,16 @@ html {
 
 .popup-photos {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
+    grid-template-columns: 1fr; /* Single column */
+    gap: 12px;
     margin-top: 15px;
 }
 
 .popup-photo {
     width: 100%;
-    height: 100px;
+    height: 180px; /* Increased from 100px */
     object-fit: cover;
-    border-radius: 8px;
+    border-radius: 10px;
     transition: transform 0.3s ease;
     cursor: pointer;
 }
@@ -2462,6 +2462,30 @@ html {
 .popup-photo:hover {
     transform: scale(1.05);
 }
+
+.location-footer {
+    display: flex;
+    justify-content: flex-start; /* Align to the left */
+    align-items: center;
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #eaeaea;
+}
+
+.location-address {
+    color: rgb(92, 92, 92) !important; /* Use your primary theme color */
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.location-address i {
+    color: var(--primary-color) !important; /* Match icon color to text */
+    font-size: 1.5rem;
+}
+
+
 
 /* Map Welcome Section */
 .welcome-section {
