@@ -162,6 +162,6 @@ The application automatically processes uploaded images:
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Contact
-- Email: contact@gapotravels.com
-- Website: https://gapotravels.com
+- Email: team.gapotravels@gmail.com
+- Website: https://gapotravels.onrender.com 
 - Phone: +63 912 911 7890
