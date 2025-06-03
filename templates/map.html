@@ -113,7 +113,7 @@
         attribution: '© OpenStreetMap contributors'
     }).addTo(map);
 
-    // Define locations
+    // Define locations with Google Maps links
     const locations = [
     {
         name: "SM City Olongapo Central",
@@ -121,7 +121,8 @@
         address: "Rizal Avenue Extension, Olongapo City",
         description: "Major shopping mall with retail stores, dining, and entertainment",
         type: "shopping",
-        photos: ["/static/images/sm_central.jpg"]
+        photos: ["/static/images/sm_central.jpg"],
+        mapsLink: "https://maps.app.goo.gl/UxZmY3MdqcgxP938A"
     },
     {
         name: "SM City Olongapo Downtown",
@@ -129,7 +130,8 @@
         address: "Magsaysay Drive, cor Gordon Ave, Olongapo City",
         description: "Popular mall with shops, dining, and entertainment",
         type: "shopping",
-        photos: ["/static/images/smcd.jpg"]
+        photos: ["/static/images/smcd.jpg"],
+        mapsLink: "https://maps.app.goo.gl/EvF1sRgfbE4XHUC88"
     },
     {
         name: "Empire",
@@ -137,7 +139,8 @@
         address: "41 Magsaysay Dr, Olongapo City",
         description: "Trendy nightclub and entertainment spot in Olongapo",
         type: "nightlife",
-        photos: ["/static/images/empire.jpeg"]
+        photos: ["/static/images/empire.jpeg"],
+        mapsLink: "https://maps.app.goo.gl/9EzdAMr6VE4GJLdY6"
     },
     {
         name: "Harbor Point",
@@ -145,7 +148,8 @@
         address: "Subic Bay, Rizal Hwy, Subic Bay Freeport Zone",
         description: "Ayala Mall with various shops and restaurants",
         type: "shopping",
-        photos: ["/static/images/harbor_point.png"]
+        photos: ["/static/images/harbor_point.png"],
+        mapsLink: "https://maps.app.goo.gl/WBaPno6RPpXNXsAe6"
     },
     {
         name: "Marikit Park",
@@ -153,7 +157,8 @@
         address: "Hospital Rd, Olongapo City",
         description: "Public park and recreational area",
         type: "park",
-        photos: ["/static/images/marikit_park.jpg"]
+        photos: ["/static/images/marikit_park.jpg"],
+        mapsLink: "https://maps.app.goo.gl/wr21TJLt15q5gqfq8"
     },
     {
         name: "Olongapo City Public Market",
@@ -161,7 +166,8 @@
         address: "2200 Rizal Avenue Extension, Olongapo City",
         description: "Traditional market with fresh local produce",
         type: "market",
-        photos: ["/static/images/public_market.jpg"]
+        photos: ["/static/images/public_market.jpg"],
+        mapsLink: "https://maps.app.goo.gl/MAHe2Qzih3Lire2o9"
     },
     {
         name: "Rizal Triangle",
@@ -169,7 +175,8 @@
         address: "Rizal Avenue Extension, Olongapo City",
         description: "Historic landmark and meeting point",
         type: "landmark",
-        photos: ["/static/images/rizal_triangle.jpg"]
+        photos: ["/static/images/rizal_triangle.jpg"],
+        mapsLink: "https://maps.app.goo.gl/Tx8W7pBaFxsz1GgY7"
     },
     {
         name: "Pamulaklakin Forest Trail",
@@ -177,7 +184,8 @@
         address: "11 Binictican Dr, Subic Bay Freeport Zone",
         description: "Nature trail with scenic views of the forest",
         type: "park",
-        photos: ["/static/images/pamulaklakin_forest_trail.jpg"]
+        photos: ["/static/images/pamulaklakin_forest_trail.jpg"],
+        mapsLink: "https://maps.app.goo.gl/Qb2Evxm7XjGov4yc6"
     },
     {
         name: "Baloy Long Beach",
@@ -185,7 +193,8 @@
         address: "100 Baloy Long Beach Rd, Olongapo City",
         description: "Popular beach strip with resorts, water activities, and vibrant nightlifes",
         type: "beach",
-        photos: ["/static/images/baloy_long_beach.jpeg"]
+        photos: ["/static/images/baloy_long_beach.jpeg"],
+        mapsLink: "https://maps.app.goo.gl/ZzhURZtMA2TVfRvp7"
     },
     {
         name: "All Hands Beach",
@@ -193,7 +202,8 @@
         address: "All Hands Beach, Subic Bay Freeport Zone",
         description: "Family-friendly beach with clear waters and white sand",
         type: "beach",
-        photos: ["/static/images/all_hands_beach.jpg"]
+        photos: ["/static/images/all_hands_beach.jpg"],
+        mapsLink: "https://maps.app.goo.gl/tv7Y7m2HsDyAJqsk8"
     },
     {
         name: "Blue Rock Beach Resort",
@@ -201,7 +211,8 @@
         address: "Baloy Long Beach Rd, Olongapo City",
         description: "Beachfront resort offering top-notch amenities and great views",
         type: "beach",
-        photos: ["/static/images/blue_rock_resort.jpg"]
+        photos: ["/static/images/blue_rock_resort.jpg"],
+        mapsLink: "https://maps.app.goo.gl/wLZdTSoTucJjCr6C9"
     },
     {
         name: "White Rock Beach",
@@ -209,7 +220,8 @@
         address: "Mojica St, Subic",
         description: "Beautiful white sand beach with clear waters",
         type: "beach",
-        photos: ["/static/images/white_rock_beach.jpg"]
+        photos: ["/static/images/white_rock_beach.jpg"],
+        mapsLink: "https://maps.app.goo.gl/SUsK6tvAhXJEGzJu7"
     },
     {
         name: "Grande Island Resort",
@@ -217,7 +229,8 @@
         address: "Subic Bay Freeport Zone, Bataan",
         description: "Island resort with pristine beaches",
         type: "beach",
-        photos: ["/static/images/grande_island.jpg"]
+        photos: ["/static/images/grande_island.jpg"],
+        mapsLink: "https://maps.app.goo.gl/dm88QPAws7Rx2LVVA"
     },
     {
         name: "SBMA Beach",
@@ -225,7 +238,8 @@
         address: "Subic Bay Freeport Zone",
         description: "Scenic beach with stunning views of Subic Bay, perfect for relaxation",
         type: "beach",
-        photos: ["/static/images/subic_beach.jpg"]
+        photos: ["/static/images/subic_beach.jpg"],
+        mapsLink: "https://maps.app.goo.gl/F4CNwBzJKg9B1oFh9"
     },
     {
         name: "Pier One Bar",
@@ -233,7 +247,8 @@
         address: "Lot 249 Waterfront Rd, Subic Bay Freeport Zone",
         description: "Lively waterfront bar with drinks, music, and sea views",
         type: "nightlife",
-        photos: ["/static/images/pier_one.jpg"]
+        photos: ["/static/images/pier_one.jpg"],
+        mapsLink: "https://maps.app.goo.gl/PdLC4wDHQ2TNXrPEA"
     },
     {
         name: "Skybar",
@@ -241,7 +256,8 @@
         address: "Subic Bay, Blk 2 Lot 3 Waterfront Rd, Subic Bay Freeport Zone",
         description: "Chill rooftop bar offering cocktails and city views",
         type: "nightlife",
-        photos: ["/static/images/skybar.jpg"]
+        photos: ["/static/images/skybar.jpg"],
+        mapsLink: "https://maps.app.goo.gl/1R2wzRYDp4Ct2uqa9"
     },
     {
         name: "JEST Camp",
@@ -249,7 +265,8 @@
         address: "Aparri Road, Subic Bay Freeport Zone, Bataan",
         description: "Survival training, bird shows, and jungle fun.",
         type: "park",
-        photos: ["/static/images/jest_camp.jpg"]
+        photos: ["/static/images/jest_camp.jpg"],
+        mapsLink: "https://maps.app.goo.gl/6VavBaf3VxBt2JeB9"
     },
     {
         name: "Zoobic Safari",
@@ -257,7 +274,8 @@
         address: "Ilanin Forest West, Subic, Bataan",
         description: "Tiger safari, exotic animals, and fun for kids.",
         type: "nature",
-        photos: ["/static/images/zoobic_safari.jpg"]
+        photos: ["/static/images/zoobic_safari.jpg"],
+        mapsLink: "https://maps.app.goo.gl/MqyfL3TRoeFRhHjP9"
     },
     {
         name: "Spanish Gate",
@@ -265,7 +283,8 @@
         address: "Sampson Rd, Subic Bay Freeport Zone",
         description: "Historic gate from the Spanish era naval base.",
         type: "landmark",
-        photos: ["/static/images/spanish_gate.png"]
+        photos: ["/static/images/spanish_gate.png"],
+        mapsLink: "https://maps.app.goo.gl/ozgGNkzpxvRR1zcw8"
     },
     {
         name: "Hellships Memorial",
@@ -273,7 +292,8 @@
         address: "Waterfront Rd, Olongapo City",
         description: "Honors World War II prisoners of war.",
         type: "landmark",
-        photos: ["/static/images/hellships_memorial.jpg"]
+        photos: ["/static/images/hellships_memorial.jpg"],
+        mapsLink: "https://maps.app.goo.gl/JXHJQT3mEtT7aGyD7"
     },
     {
         name: "Meat Plus",
@@ -281,7 +301,8 @@
         address: "65 Sampson Rd, Subic Bay Freeport Zone",
         description: "Meat-centric restaurant with a variety of meat dishes.",
         type: "food",
-        photos: ["/static/images/meat_plus.jpg"]
+        photos: ["/static/images/meat_plus.jpg"],
+        mapsLink: "https://maps.app.goo.gl/B3NQdcV9L5av6Dj4A"
     },
     {
         name: "Gerry's Grill",
@@ -289,7 +310,8 @@
         address: "Subic, Lot 89-A Waterfront Rd, Olongapo City",
         description: "Filipino restaurant with seafood specialties",
         type: "food",
-        photos: ["/static/images/gerrys.jpg"]
+        photos: ["/static/images/gerrys.jpg"],
+        mapsLink: "https://maps.app.goo.gl/o6fzHnHXtbgyxYEt7"
     },
     {
         name: "Xtremely Xpresso",
@@ -297,7 +319,8 @@
         address: "1 Dewey Avenue, Subic Bay Freeport Zone",
         description: "Coffee shop with a variety of coffee and pastries.",
         type: "food",
-        photos: ["/static/images/xpresso.jpg"]
+        photos: ["/static/images/xpresso.jpg"],
+        mapsLink: "https://maps.app.goo.gl/3VkaCt9S9gpfd7sK9"
     }
 ];
 
@@ -422,7 +445,7 @@
             })
             }).bindPopup(`
                 <div class="popup-content">
-                    <h5>${location.name}</h5>
+                    <h5><a href="${location.mapsLink}" target="_blank" class="location-map-link">${location.name}</a></h5>
                     <p>${location.description}</p>
                     ${location.photos ? `
                         <div class="popup-photos">
@@ -452,7 +475,7 @@
                             <i class="fas fa-${getIconForType(location.type)} text-primary" style="font-size: 1.5rem;"></i>
                         </div>
                         <div>
-                            <h6 class="mb-1">${location.name}</h6>
+                            <h6 class="mb-1"><a href="${location.mapsLink}" target="_blank" class="location-map-link">${location.name}</a></h6>
                             <p class="mb-0 small text-muted">${location.description}</p>
                         </div>
                     </div>
@@ -799,6 +822,17 @@
     // Add these styles to the head section
     const style = document.createElement('style');
     style.textContent = `
+        .location-map-link {
+            color: #228B22; /* Forest Green primary color */
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+        
+        .location-map-link:hover {
+            color: #4682B4; /* Steel Blue secondary color */
+            text-decoration: underline;
+        }
+        
         .image-popup {
             position: fixed;
             top: 0;
