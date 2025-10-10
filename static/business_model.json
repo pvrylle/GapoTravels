@@ -1,0 +1,109 @@
+{
+  "name": "GapoTravels Business Model Canvas",
+  "version": "1.0",
+  "last_updated": "2025-10-10T00:00:00Z",
+  "sections": [
+    {
+      "id": "key_partners",
+      "title": "Key Partners",
+      "order": 1,
+      "items": [
+        "Olongapo City Tourism Office",
+        "Local businesses and attractions",
+        "Hotel and tour operators",
+        "Map and geocoding providers (e.g., Leaflet/OpenStreetMap)",
+        "Supabase (auth, DB, storage)",
+        "MailJet (transactional email)"
+      ]
+    },
+    {
+      "id": "key_activities",
+      "title": "Key Activities",
+      "order": 2,
+      "items": [
+        "Curate and maintain destination listings",
+        "Moderate user reviews and photos",
+        "Maintain interactive map and search",
+        "Partnership outreach and onboarding",
+        "Content and SEO optimization"
+      ]
+    },
+    {
+      "id": "value_propositions",
+      "title": "Value Propositions",
+      "order": 3,
+      "items": [
+        "One-stop guide to Olongapo destinations",
+        "Trustworthy community reviews and ratings",
+        "Fast mobile-friendly experience",
+        "Curated itineraries and local tips",
+        "Exclusive local deals (future)"
+      ]
+    },
+    {
+      "id": "customer_relationships",
+      "title": "Customer Relationships",
+      "order": 4,
+      "items": [
+        "Self-service platform with community input",
+        "Responsive support via email/social",
+        "Email notifications for account and updates",
+        "Gamified contributions (future)"
+      ]
+    },
+    {
+      "id": "channels",
+      "title": "Channels",
+      "order": 5,
+      "items": [
+        "Website (gapotravels.onrender.com)",
+        "Organic search (SEO)",
+        "Social media (FB/IG/TikTok)",
+        "Local partner referrals"
+      ]
+    },
+    {
+      "id": "customer_segments",
+      "title": "Customer Segments",
+      "order": 6,
+      "items": [
+        "Domestic and international tourists",
+        "Local residents exploring the city",
+        "Small businesses seeking exposure"
+      ]
+    },
+    {
+      "id": "key_resources",
+      "title": "Key Resources",
+      "order": 7,
+      "items": [
+        "Web application and infrastructure",
+        "Destination and review data",
+        "Brand and community",
+        "Local partnerships"
+      ]
+    },
+    {
+      "id": "cost_structure",
+      "title": "Cost Structure",
+      "order": 8,
+      "items": [
+        "Hosting and CDN",
+        "Third-party APIs and email",
+        "Marketing and partnerships",
+        "Operations and moderation"
+      ]
+    },
+    {
+      "id": "revenue_streams",
+      "title": "Revenue Streams",
+      "order": 9,
+      "items": [
+        "Featured listings and sponsorships",
+        "Advertising (contextual)",
+        "Affiliate commissions (hotels/tours)",
+        "Premium listings for businesses"
+      ]
+    }
+  ]
+}

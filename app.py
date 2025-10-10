@@ -1375,6 +1375,48 @@ def upload_profile_picture(file):
         logger.error(f"Error uploading profile picture: {str(e)}")
         raise e
 
+# ===== BUSINESS MODEL ROUTES - START =====
+def _load_business_model_data():
+    """Load Business Model Canvas data from static JSON with safe fallbacks"""
+    try:
+        json_path = os.path.join(app.root_path, 'static', 'business_model.json')
+        with open(json_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+            # Basic shape validation
+            if not isinstance(data, dict):
+                raise ValueError("business_model.json root must be an object")
+            if 'sections' in data and not isinstance(data['sections'], list):
+                raise ValueError("'sections' must be a list")
+            return data
+    except FileNotFoundError:
+        logger.warning("business_model.json not found; using default empty structure")
+    except Exception as e:
+        logger.error(f"Error loading business_model.json: {e}")
+
+    # Default minimal structure
+    return {
+        "name": "Business Model Canvas",
+        "version": "1.0",
+        "last_updated": get_current_timestamp(),
+        "sections": []
+    }
+
+
+@app.route('/api/business-model')
+def get_business_model():
+    """JSON API for the Business Model Canvas"""
+    data = _load_business_model_data()
+    return jsonify(data)
+
+
+@app.route('/business-model')
+def business_model():
+    """Render a read-only Business Model Canvas page"""
+    data = _load_business_model_data()
+    return render_template('business_model.html', model=data)
+
+# ===== BUSINESS MODEL ROUTES - END =====
+
 #Run the app
 if __name__ == "__main__":
     app.run(debug=True)
