@@ -36,13 +36,19 @@ load_dotenv()
 
 # ===== ENV VARIABLES - START =====
 
-# Check if we're on render.com
-IS_PRODUCTION = os.environ.get('RENDER') is not None
+# Check if we're on render.com or vercel
+IS_RENDER = os.environ.get('RENDER') is not None
+IS_VERCEL = os.environ.get('VERCEL') is not None
+IS_PRODUCTION = IS_RENDER or IS_VERCEL
 
 # Set proper URL based on environment
-if IS_PRODUCTION:
+if IS_RENDER:
     FRONTEND_URL = "https://gapotravels.onrender.com"
     logger.info("Running in production mode on render.com")
+elif IS_VERCEL:
+    FRONTEND_URL = os.getenv("VERCEL_URL", "http://localhost:3000")
+    FRONTEND_URL = f"https://{FRONTEND_URL}" if not FRONTEND_URL.startswith(('http://', 'https://')) else FRONTEND_URL
+    logger.info(f"Running in production mode on Vercel with URL: {FRONTEND_URL}")
 else:
     FRONTEND_URL = os.getenv("FRONTEND_URL", "http://127.0.0.1:5000")
     logger.info(f"Running in development mode with URL: {FRONTEND_URL}")
@@ -1377,4 +1383,9 @@ def upload_profile_picture(file):
 
 #Run the app
 if __name__ == "__main__":
+    # For local development
     app.run(debug=True)
+
+# Export app for Vercel
+# Vercel requires the app to be exported for serverless functions
+handler = app
