@@ -133,3 +133,9 @@ Thumbs.db
 instance/
 .env.local
 uploads/
+
+
+# dependencies
+/node_modules
+.vercel
+.env*.local
